@@ -32,3 +32,6 @@ tests/_support/_generated
 # Ignore temp dirs
 /web/assets/
 /runtime/
+
+# Ignore db config
+/config/db.php
