@@ -16,6 +16,8 @@ class CSVHandler extends \yii\base\Component
 
     public $operation;
 
+    protected $imported = 0;
+
     public function process($file)
     {
         if (($handle = fopen($file->tempName, "r")) !== false)
@@ -25,6 +27,7 @@ class CSVHandler extends \yii\base\Component
             }
             fclose($handle);
         }
+        return $this->imported;
     }
 
     protected function addTrackingFromLine($csvLine)
@@ -40,7 +43,7 @@ class CSVHandler extends \yii\base\Component
                     'track_number' => $csvLine[self::INDEX_TRACKING],
                     'upload_id'    => $this->operation->id,
                 ]);
-                $tracking->save();
+                if ($tracking->save()) $this->imported++;
             }
         }
     }

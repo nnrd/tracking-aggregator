@@ -34,12 +34,7 @@ class Manager extends \yii\base\Component
     public function processFile($file)
     {
         $mime = FileHelper::getMimeType($file->tempName);
-        $op = new UploadOperation([
-            'filename' => $file->name,
-            'mime' => $mime,
-            'status' => UploadOperation::STATUS_UPLOADED,
-            'uploaded_by' => Yii::$app->user->id,
-        ]);
+        $op = $this->createOperation($file->name, $mime);
         if (!$op->save())
         {
             return $op;
@@ -54,7 +49,18 @@ class Manager extends \yii\base\Component
                 $handler = new $class(['operation' => $op]);
                 $op->handler = $class;
 
-                $handler->process($file);
+                $imported = $handler->process($file);
+
+                if ($imported == 0)
+                {
+                    $transaction->rollback();
+                    $op->delete();
+                    $op = $this->createOperation($file->name, $mime);
+                    $op->addError('filename', Yii::t('app', 'File {0} has no valid tracking data', $file->name));
+                    return $op;
+                }
+
+
                 $op->status = UploadOperation::STATUS_PROCESSED;
 
                 if ($op->hasErrors() || !$op->save())
@@ -76,5 +82,15 @@ class Manager extends \yii\base\Component
         //     $transaction->rollback();
         //     return $op;
         // }
+    }
+
+    protected function createOperation($filename, $mime)
+    {
+        return new UploadOperation([
+            'filename' => $filename,
+            'mime' => $mime,
+            'status' => UploadOperation::STATUS_UPLOADED,
+            'uploaded_by' => Yii::$app->user->id,
+        ]);
     }
 }
