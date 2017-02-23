@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Tracking', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Upload Trackings', ['upload'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Upload Trackings', ['uploads/upload'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
