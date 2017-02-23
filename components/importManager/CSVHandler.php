@@ -12,7 +12,7 @@ class CSVHandler extends \yii\base\Component
     const INDEX_LAST_NAME = 2;
     const INDEX_TRACKING = 3;
 
-    const LINE_LENGTH = self::INDEX_TRACKING + 1;
+    const LINE_LENGTH = 4;
 
     public $operation;
     public $category;
