@@ -80,7 +80,7 @@ class TrackingSearch extends Tracking
         // grid filtering conditions
         $query->andFilterWhere([
             'tracking.id' => $this->id,
-            'status' => $this->status,
+            'tracking.status' => $this->status,
             'tracker_status' => $this->tracker_status,
             'upload_id' => $this->upload_id,
         ]);
