@@ -4,6 +4,7 @@ namespace app\components\importManager;
 use Yii;
 use yii\helpers\FileHelper;
 use app\models\UploadOperation;
+use app\models\Category;
 
 class Manager extends \yii\base\Component
 {
@@ -20,18 +21,40 @@ class Manager extends \yii\base\Component
     public function process($form)
     {
         $ops = [];
+        $category = false;
+
+        if (isset($form->category_id))
+        {
+            $category = Category::findOne($form->category_id);
+            if ($category && $form->create_subcategory && $form->subcategory_name)
+            {
+                $category = $category->tryAddSubcategory($form->subcategory_name);
+                if (!$category || $category->hasErrors())
+                {
+                    $form->addError('subcategory_name', Yii::t('app', 'Failed to create subcategory {0}',  $form->subcategory_name));
+                    return false;
+                }
+            }
+        }
+
+        $skip = 0;
+        if (isset($form->skip_lines))
+        {
+            $skip = $form->skip_lines;
+        }
+
         foreach($form->files as $file)
         {
             if (!$file->hasError)
             {
-                $ops[] = $this->processFile($file);
+                $ops[] = $this->processFile($file, $category, $skip);
             }
         }
 
         return $ops;
     }
 
-    public function processFile($file)
+    public function processFile($file, $category, $skip)
     {
         $mime = FileHelper::getMimeType($file->tempName);
         $op = $this->createOperation($file->name, $mime);
@@ -46,7 +69,11 @@ class Manager extends \yii\base\Component
             if (array_key_exists($mime, $this->handlers))
             {
                 $class = $this->handlers[$mime];
-                $handler = new $class(['operation' => $op]);
+                $handler = new $class([
+                    'operation' => $op,
+                    'category' => $category,
+                    'skipLines' => $skip,
+                ]);
                 $op->handler = $class;
 
                 $imported = $handler->process($file);

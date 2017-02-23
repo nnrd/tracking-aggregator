@@ -131,4 +131,15 @@ class Category extends \yii\db\ActiveRecord
         }
     }
 
+    public function tryAddSubcategory($title)
+    {
+        $category = self::find()->andWhere(['title' => $title])->one();
+        if ($category) return $category;
+
+        $category = new Category(['title' => $title]);
+        $category->appendTo($this, false);
+        return $category;
+
+    }
+
 }

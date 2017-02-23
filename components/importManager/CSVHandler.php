@@ -15,6 +15,8 @@ class CSVHandler extends \yii\base\Component
     const LINE_LENGTH = self::INDEX_TRACKING + 1;
 
     public $operation;
+    public $category;
+    public $skipLines = 0;
 
     protected $imported = 0;
 
@@ -23,6 +25,13 @@ class CSVHandler extends \yii\base\Component
         if (($handle = fopen($file->tempName, "r")) !== false)
         {
             while (($csvLine = fgetcsv($handle, 0, ",")) !== false) {
+
+                if ($this->skipLines > 0)
+                {
+                    $this->skipLines--;
+                    continue;
+                }
+
                 $this->addTrackingFromLine($csvLine);
             }
             fclose($handle);
@@ -43,7 +52,15 @@ class CSVHandler extends \yii\base\Component
                     'track_number' => $csvLine[self::INDEX_TRACKING],
                     'upload_id'    => $this->operation->id,
                 ]);
+                if (isset($this->category) && $this->category)
+                {
+                    $tracking->category_id = $category->id;
+                }
                 if ($tracking->save()) $this->imported++;
+            }
+            else
+            {
+                $this->imported++;
             }
         }
     }

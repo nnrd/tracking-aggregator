@@ -35,6 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'create_subcategory')->checkbox() ?>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'skipLines')->textInput() ?>
+        </div>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Upload', ['class' => 'btn btn-success']) ?>
