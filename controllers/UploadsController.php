@@ -55,6 +55,7 @@ class UploadsController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'insideTab' => false,
         ]);
     }
 

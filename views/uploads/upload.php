@@ -3,6 +3,7 @@
 use yii\widgets\ActiveForm;
 use app\components\Html;
 use app\models\Category;
+use app\models\Tracking;
 
 
 $this->title = 'Upload Trackings';
@@ -37,9 +38,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="row">
         <div class="col-md-6">
+            <?= $form->field($model, 'status')->dropDownList(Tracking::getStatusLabels()) ?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($model, 'skipLines')->textInput() ?>
+            <?= $form->field($model, 'skip_lines')->textInput() ?>
         </div>
     </div>
 

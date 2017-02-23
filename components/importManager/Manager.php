@@ -5,6 +5,7 @@ use Yii;
 use yii\helpers\FileHelper;
 use app\models\UploadOperation;
 use app\models\Category;
+use app\models\Tracking;
 
 class Manager extends \yii\base\Component
 {
@@ -43,18 +44,24 @@ class Manager extends \yii\base\Component
             $skip = $form->skip_lines;
         }
 
+        $status = Tracking::STATUS_NORMAL;
+        if (isset($form->status))
+        {
+            $status = $form->status;
+        }
+
         foreach($form->files as $file)
         {
             if (!$file->hasError)
             {
-                $ops[] = $this->processFile($file, $category, $skip);
+                $ops[] = $this->processFile($file, $category, $skip, $status);
             }
         }
 
         return $ops;
     }
 
-    public function processFile($file, $category, $skip)
+    public function processFile($file, $category, $skip, $status)
     {
         $mime = FileHelper::getMimeType($file->tempName);
         $op = $this->createOperation($file->name, $mime);
@@ -73,6 +80,7 @@ class Manager extends \yii\base\Component
                     'operation' => $op,
                     'category' => $category,
                     'skipLines' => $skip,
+                    'status' => $status,
                 ]);
                 $op->handler = $class;
 

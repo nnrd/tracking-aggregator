@@ -14,8 +14,11 @@ class TrackingSearch extends Tracking
 {
 
     public $created_range;
+    public $updated_range;
     public $tracked_range;
     public $delivered_range;
+
+    public $filename;
 
     /**
      * @inheritdoc
@@ -25,7 +28,7 @@ class TrackingSearch extends Tracking
         return [
             [['id', 'category_id', 'status', 'tracker_status', 'upload_id'], 'integer'],
             [['order_id', 'track_number', 'first_name', 'last_name', 'data', 'created_at', 'updated_at', 'tracked_at', 'delivered_at'], 'safe'],
-            [['created_range', 'tracked_range', 'delivered_range'], 'safe'],
+            [['created_range','updated_range', 'tracked_range', 'delivered_range', 'filename'], 'safe'],
         ];
     }
 
@@ -47,7 +50,7 @@ class TrackingSearch extends Tracking
      */
     public function search($params)
     {
-        $query = Tracking::find()->joinWith(['category']);
+        $query = Tracking::find()->joinWith(['category', 'uploadOperation']);
 
         // add conditions that should always apply here
 
@@ -58,6 +61,11 @@ class TrackingSearch extends Tracking
         $dataProvider->sort->attributes['category'] = [
             'asc'  => ['category.title' => SORT_ASC],
             'desc' => ['category.title' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['filename'] = [
+            'asc'  => ['upload_operation.filename' => SORT_ASC],
+            'desc' => ['upload_operation.filename' => SORT_DESC],
         ];
 
 
@@ -77,9 +85,10 @@ class TrackingSearch extends Tracking
             'upload_id' => $this->upload_id,
         ]);
 
-        $this->filterDateField($query,'created_range', 'created_at');
-        $this->filterDateField($query,'tracked_range', 'tracked_at');
-        $this->filterDateField($query,'delivered_range', 'delivered_at');
+        $this->filterDateField($query,'created_range', 'tracking.created_at');
+        $this->filterDateField($query,'updated_range', 'tracking.updated_at');
+        $this->filterDateField($query,'tracked_range', 'tracking.tracked_at');
+        $this->filterDateField($query,'delivered_range', 'tracking.delivered_at');
 
         if(!empty($this->category_id))
         {
@@ -95,7 +104,8 @@ class TrackingSearch extends Tracking
             ->andFilterWhere(['like', 'order_id', $this->order_id])
             ->andFilterWhere(['like', 'track_number', $this->track_number])
             ->andFilterWhere(['like', 'first_name', $this->first_name])
-            ->andFilterWhere(['like', 'last_name', $this->last_name]);
+            ->andFilterWhere(['like', 'last_name', $this->last_name])
+            ->andFilterWhere(['like', 'upload_operation.filename', $this->filename]);
 
         return $dataProvider;
     }

@@ -17,6 +17,7 @@ class CSVHandler extends \yii\base\Component
     public $operation;
     public $category;
     public $skipLines = 0;
+    public $status;
 
     protected $imported = 0;
 
@@ -43,25 +44,35 @@ class CSVHandler extends \yii\base\Component
     {
         if (count($csvLine) >= self::LINE_LENGTH)
         {
-            if (Tracking::find()->andFilterWhere(['order_id' => $csvLine[self::INDEX_ORDER_ID]])->count() == 0)
+            $tracking = Tracking::find()->andFilterWhere(['track_number' => $csvLine[self::INDEX_TRACKING]])->one();
+            if ($tracking)
+            {
+                $tracking->order_id = $csvLine[self::INDEX_ORDER_ID];
+                $tracking->first_name = $csvLine[self::INDEX_FIRST_NAME];
+                $tracking->last_name = $csvLine[self::INDEX_LAST_NAME];
+                $tracking->upload_id = $this->operation->id;
+            }
+            else
             {
                 $tracking = new Tracking([
                     'order_id'     => $csvLine[self::INDEX_ORDER_ID],
-                    'firts_name'   => $csvLine[self::INDEX_FIRST_NAME],
+                    'first_name'   => $csvLine[self::INDEX_FIRST_NAME],
                     'last_name'    => $csvLine[self::INDEX_LAST_NAME],
                     'track_number' => $csvLine[self::INDEX_TRACKING],
                     'upload_id'    => $this->operation->id,
                 ]);
-                if (isset($this->category) && $this->category)
-                {
-                    $tracking->category_id = $category->id;
-                }
-                if ($tracking->save()) $this->imported++;
             }
-            else
+
+            if (isset($this->category) && $this->category)
             {
-                $this->imported++;
+                $tracking->category_id = $this->category->id;
             }
+            if (isset($this->status))
+            {
+                $tracking->status = $this->status;
+            }
+
+            if ($tracking->save()) $this->imported++;
         }
     }
 }

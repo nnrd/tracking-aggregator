@@ -66,7 +66,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         : $model->tracker_status;
                 }
             ],
-            'upload_id',
+            [
+                'attribute' => 'filename',
+                'format' => 'html',
+                'value'     => function(Tracking $model)
+                {
+                    return ($model->upload_id && $model->uploadOperation)
+                        ? Html::a($model->uploadOperation->filename, ['uploads/view', 'id' => $model->uploadOperation->id])
+                        : $model->upload_id;
+                }
+            ],
             [
                 'attribute' => 'created_at',
                 'format' => 'html',
@@ -76,6 +85,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => DateRangePicker::widget([
                     'model'          => $searchModel,
                     'attribute'      => 'created_range',
+                    'convertFormat'  => true,
+                    'pluginOptions' => [
+                        'locale'=>[
+                            'format'=>'Y-m-d',
+                        ]
+                    ],
+                ]),
+            ],
+            [
+                'attribute' => 'updated_at',
+                'format' => 'html',
+                'value' => function(Tracking $model) {
+                    return Yii::$app->formatter->asDateTime($model->updated_at);
+                },
+                'filter' => DateRangePicker::widget([
+                    'model'          => $searchModel,
+                    'attribute'      => 'updated_range',
                     'convertFormat'  => true,
                     'pluginOptions' => [
                         'locale'=>[

@@ -58,11 +58,11 @@ class Tracking extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['order_id'], 'required'],
+            [['order_id', 'track_number'], 'required'],
             [['category_id', 'status', 'tracker_status', 'upload_id', 'tracked_at', 'delivered_at'], 'integer'],
             [['order_id', 'track_number'], 'string', 'max' => 30],
             [['first_name', 'last_name'], 'string', 'max' => 40],
-            [['order_id'], 'unique'],
+            [['track_number'], 'unique'],
             [['data'], 'string'],
         ];
     }
@@ -106,6 +106,14 @@ class Tracking extends \yii\db\ActiveRecord
     public function getCategory()
     {
         return $this->hasOne(Category::className(), ['id' => 'category_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUploadOperation()
+    {
+        return $this->hasOne(UploadOperation::className(), ['id' => 'upload_id']);
     }
 
     public static function getStatusLabels()
