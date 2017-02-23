@@ -48,7 +48,7 @@ class Tracking extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
         $scenarios[self::SCENARIO_FORM] = ['order_id', 'category_id', 'status', 'first_name', 'last_name', 'track_number'];
-        $scenarios[self::SCENARIO_TRACK] = ['tracked_at', 'tracker_status'];
+        $scenarios[self::SCENARIO_TRACK] = ['delivered_at', 'tracked_at', 'tracker_status'];
         return $scenarios;
     }
 
@@ -59,7 +59,7 @@ class Tracking extends \yii\db\ActiveRecord
     {
         return [
             [['order_id'], 'required'],
-            [['category_id', 'status', 'tracker_status', 'upload_id', 'tracked_at'], 'integer'],
+            [['category_id', 'status', 'tracker_status', 'upload_id', 'tracked_at', 'delivered_at'], 'integer'],
             [['order_id', 'track_number'], 'string', 'max' => 30],
             [['first_name', 'last_name'], 'string', 'max' => 40],
             [['order_id'], 'unique'],
@@ -93,9 +93,10 @@ class Tracking extends \yii\db\ActiveRecord
             'tracker_status' => Yii::t('app', 'Tracking Status'),
             'upload_id' => Yii::t('app', 'Upload ID'),
             'data' => Yii::t('app', 'Data'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'tracked_at' => Yii::t('app', 'Tracked At'),
+            'created_at' => Yii::t('app', 'Created'),
+            'updated_at' => Yii::t('app', 'Updated'),
+            'tracked_at' => Yii::t('app', 'Tracked'),
+            'delivered_at' => Yii::t('app', 'Delivered'),
         ];
     }
 
