@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\models\Category;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Tracking */
@@ -30,17 +31,24 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'order_id',
-            'category_id',
+            [
+                'attribute' => 'category_id',
+                'value' => isset($model->category_id) ? implode(' / ', Category::find()
+                                                                ->andFilterWhere(['id' =>  $model->category_id])->one()->getPath(true)) : null,
+            ],
             'track_number',
             'first_name',
             'last_name',
-            'status',
+            [
+                'attribute' => 'status',
+                'value' => isset($model->status) ? $model->getStatusLabels()[$model->status] : null,
+            ],
             'tracker_status',
             'upload_id',
             'data:ntext',
-            'created_at',
-            'updated_at',
-            'tracked_at',
+            'created_at:datetime',
+            'updated_at:datetime',
+            'tracked_at:datetime',
         ],
     ]) ?>
 

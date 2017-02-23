@@ -107,23 +107,28 @@ class Category extends \yii\db\ActiveRecord
      *
      * @return string[]
      */
-    public static function getPathsList($condition = [], $withRoot = false)
+    public static function getPathsList($condition = [])
     {
-        $node = self::find()->andFilterWhere($condition)->limit(1)->one();
+        $roots = self::find()->andFilterWhere($condition)->roots()->all();
+        if (!$roots) return [];
 
-        $result = $withRoot
-            ? $result = [$node->id => implode(' / ', $node->getPath($withRoot))]
-            : [];
+        $result = [];
 
-        $nodes = ($node instanceof Category && !empty($condition))
-            ? $node->children()->all()
-            : self::find()->leaves()->all();
-
-        foreach($nodes as $subnode)
+        foreach($roots as $root)
         {
-            $result[$subnode->id] = implode(' / ', $subnode->getPath($withRoot));
+            $result[$root->id] = implode(' / ', $root->getPath(true));
+            self::walkNodes($root, $result);
         }
-
         return $result;
     }
+
+    private static function walkNodes($node, &$result)
+    {
+        foreach($node->children(1)->all() as $subnode)
+        {
+            $result[$subnode->id] = implode(' / ', $subnode->getPath(true));
+            self::walkNodes($subnode, $result);
+        }
+    }
+
 }

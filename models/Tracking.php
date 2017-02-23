@@ -24,12 +24,32 @@ use yii\behaviors\TimestampBehavior;
  */
 class Tracking extends \yii\db\ActiveRecord
 {
+
+    const SCENARIO_FORM = 'form';
+    const SCENARIO_TRACK = 'track';
+
+
+    /*
+     * Statuses for tracking ops
+     */
+    const STATUS_DISABLED = 0; // Do not check tracking
+    const STATUS_NORMAL = 1; // Check as usual - check if possible
+    const STATUS_URGENT = 2; // Urgent checking - check these first anyway
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return 'tracking';
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_FORM] = ['order_id', 'category_id', 'status', 'first_name', 'last_name', 'track_number'];
+        $scenarios[self::SCENARIO_TRACK] = ['tracked_at', 'tracker_status'];
+        return $scenarios;
     }
 
     /**
@@ -40,10 +60,10 @@ class Tracking extends \yii\db\ActiveRecord
         return [
             [['order_id'], 'required'],
             [['category_id', 'status', 'tracker_status', 'upload_id', 'tracked_at'], 'integer'],
-            [['data'], 'string'],
             [['order_id', 'track_number'], 'string', 'max' => 30],
             [['first_name', 'last_name'], 'string', 'max' => 40],
             [['order_id'], 'unique'],
+            [['data'], 'string'],
         ];
     }
 
@@ -76,6 +96,29 @@ class Tracking extends \yii\db\ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'tracked_at' => Yii::t('app', 'Tracked At'),
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+    }
+
+    public static function getStatusLabels()
+    {
+        return [
+            self::STATUS_DISABLED => Yii::t('app', 'Disabled'),
+            self::STATUS_NORMAL => Yii::t('app', 'Normal'),
+            self::STATUS_URGENT => Yii::t('app', 'Urgent'),
+        ];
+    }
+
+    public static function getTrackerStatusLabels()
+    {
+        return [
         ];
     }
 }

@@ -18,8 +18,8 @@ class TrackingSearch extends Tracking
     public function rules()
     {
         return [
-            [['id', 'category_id', 'status', 'tracker_status', 'upload_id', 'created_at', 'updated_at', 'tracked_at'], 'integer'],
-            [['order_id', 'track_number', 'first_name', 'last_name', 'data'], 'safe'],
+            [['id', 'category_id', 'status', 'tracker_status', 'upload_id'], 'integer'],
+            [['order_id', 'track_number', 'first_name', 'last_name', 'data', 'created_at', 'updated_at', 'tracked_at'], 'safe'],
         ];
     }
 
@@ -41,13 +41,19 @@ class TrackingSearch extends Tracking
      */
     public function search($params)
     {
-        $query = Tracking::find();
+        $query = Tracking::find()->joinWith(['category']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['category'] = [
+            'asc'  => ['category.title' => SORT_ASC],
+            'desc' => ['category.title' => SORT_DESC],
+        ];
+
 
         $this->load($params);
 
@@ -59,22 +65,43 @@ class TrackingSearch extends Tracking
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'category_id' => $this->category_id,
+            'tracking.id' => $this->id,
             'status' => $this->status,
             'tracker_status' => $this->tracker_status,
             'upload_id' => $this->upload_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'tracked_at' => $this->tracked_at,
         ]);
 
-        $query->andFilterWhere(['like', 'order_id', $this->order_id])
+        $this->filterDateField($query,'created_at');
+        $this->filterDateField($query,'tracked_at');
+
+        if(!empty($this->category_id))
+        {
+            // with subnodes
+            $_node       = Category::findOne(['id' => $this->category_id]);
+            $_categories = $_node->children()->asArray()->all();
+            array_push($_categories, $_node->toArray());
+            $_categories = \yii\helpers\ArrayHelper::map($_categories, 'id', 'id');
+            $query->andFilterWhere([self::tableName() . '.category_id' => $_categories]);
+        }
+
+        $query
+            ->andFilterWhere(['like', 'order_id', $this->order_id])
             ->andFilterWhere(['like', 'track_number', $this->track_number])
             ->andFilterWhere(['like', 'first_name', $this->first_name])
-            ->andFilterWhere(['like', 'last_name', $this->last_name])
-            ->andFilterWhere(['like', 'data', $this->data]);
+            ->andFilterWhere(['like', 'last_name', $this->last_name]);
 
         return $dataProvider;
+    }
+
+    protected function filterDateField($query, $fieldName)
+    {
+        if (isset($this->$fieldName)) {
+            $time = strtotime($this->$fieldName);
+            if ($time)
+            {
+                $query->andFilterWhere(['>=', $fieldName, strtotime('midnight', $time)]);
+                $query->andFilterWhere(['<', $fieldName, strtotime('tomorrow', $time)]);
+            }
+        }
     }
 }
