@@ -1,0 +1,13 @@
+.bootstrap-treeview-widget .update-button
+{
+    margin-left: 6px;
+}
+.bootstrap-treeview-widget .input-field
+{
+    width: 100%;
+    outline: none;
+    border: none;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
