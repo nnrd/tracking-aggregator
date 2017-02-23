@@ -2,6 +2,7 @@
 
 use app\components\Html;
 use yii\grid\GridView;
+use kartik\daterange\DateRangePicker;
 use app\models\Tracking;
 use app\models\Category;
 
@@ -72,14 +73,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function(Tracking $model) {
                     return Yii::$app->formatter->asDateTime($model->created_at);
                 },
-                'filter' => \yii\jui\DatePicker::widget([
-                    'model' => $searchModel,
-                    'attribute'=>'created_at',
-                    'options' => ['class' => 'form-control'],
-                    /*
-                     * 'language' => 'ru',
-                     * 'dateFormat' => 'dd-MM-yyyy',
-                     */
+                'filter' => DateRangePicker::widget([
+                    'model'          => $searchModel,
+                    'attribute'      => 'created_range',
+                    'convertFormat'  => true,
+                    'pluginOptions' => [
+                        'locale'=>[
+                            'format'=>'Y-m-d',
+                        ]
+                    ],
                 ]),
             ],
             [
@@ -88,14 +90,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function(Tracking $model) {
                     return Yii::$app->formatter->asDateTime($model->tracked_at);
                 },
-                'filter' => \yii\jui\DatePicker::widget([
-                    'model' => $searchModel,
-                    'attribute'=>'tracked_at',
-                    'options' => ['class' => 'form-control'],
-                    /*
-                     * 'language' => 'ru',
-                     * 'dateFormat' => 'dd-MM-yyyy',
-                     */
+                'filter' => DateRangePicker::widget([
+                    'model'          => $searchModel,
+                    'attribute'      => 'tracked_range',
+                    'convertFormat'  => true,
+                    'pluginOptions' => [
+                        'locale'=>[
+                            'format'=>'Y-m-d',
+                        ]
+                    ],
+                ]),
+            ],
+            [
+                'attribute' => 'delivered_at',
+                'format' => 'html',
+                'value' => function(Tracking $model) {
+                    return Yii::$app->formatter->asDateTime($model->delivered_at);
+                },
+                'filter' => DateRangePicker::widget([
+                    'model'          => $searchModel,
+                    'attribute'      => 'delivered_range',
+                    'convertFormat'  => true,
+                    'pluginOptions' => [
+                        'locale'=>[
+                            'format'=>'Y-m-d',
+                        ]
+                    ],
                 ]),
             ],
 

@@ -12,6 +12,11 @@ use app\models\Tracking;
  */
 class TrackingSearch extends Tracking
 {
+
+    public $created_range;
+    public $tracked_range;
+    public $delivered_range;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +24,8 @@ class TrackingSearch extends Tracking
     {
         return [
             [['id', 'category_id', 'status', 'tracker_status', 'upload_id'], 'integer'],
-            [['order_id', 'track_number', 'first_name', 'last_name', 'data', 'created_at', 'updated_at', 'tracked_at'], 'safe'],
+            [['order_id', 'track_number', 'first_name', 'last_name', 'data', 'created_at', 'updated_at', 'tracked_at', 'delivered_at'], 'safe'],
+            [['created_range', 'tracked_range', 'delivered_range'], 'safe'],
         ];
     }
 
@@ -71,8 +77,9 @@ class TrackingSearch extends Tracking
             'upload_id' => $this->upload_id,
         ]);
 
-        $this->filterDateField($query,'created_at');
-        $this->filterDateField($query,'tracked_at');
+        $this->filterDateField($query,'created_range', 'created_at');
+        $this->filterDateField($query,'tracked_range', 'tracked_at');
+        $this->filterDateField($query,'delivered_range', 'delivered_at');
 
         if(!empty($this->category_id))
         {
@@ -93,15 +100,22 @@ class TrackingSearch extends Tracking
         return $dataProvider;
     }
 
-    protected function filterDateField($query, $fieldName)
+    protected function filterDateField($query, $fieldName, $tableFieldName)
     {
-        if (isset($this->$fieldName)) {
-            $time = strtotime($this->$fieldName);
-            if ($time)
+        if (isset($this->$fieldName) && strpos($this->$fieldName, ' - ') !== false)
+        {
+            list($start_date, $end_date) = explode(' - ', $this->$fieldName);
+            $start_time = strtotime($start_date);
+            if ($start_time)
             {
-                $query->andFilterWhere(['>=', $fieldName, strtotime('midnight', $time)]);
-                $query->andFilterWhere(['<', $fieldName, strtotime('tomorrow', $time)]);
+                $query->andFilterWhere(['>=', $tableFieldName, strtotime('midnight', $start_time)]);
             }
+            $end_time = strtotime($end_date);
+            if ($start_time)
+            {
+                $query->andFilterWhere(['<', $tableFieldName, strtotime('tomorrow',$end_time)]);
+            }
+            //$this->$fieldName = null;
         }
     }
 }
