@@ -54,7 +54,7 @@ $trackerStatuses = Tracking::getTrackerStatusLabels();
                 'filter'    => $carriers,
                 'value'     => function(Tracking $model) use ($carriers)
                 {
-                    return ($model->carrier && array_key_exists($model->carrier, $carriers))
+                    return (isset($model->carrier) && array_key_exists($model->carrier, $carriers))
                         ? $carriers[$model->carrier]
                         : $model->carrier;
                 }
@@ -66,7 +66,7 @@ $trackerStatuses = Tracking::getTrackerStatusLabels();
                 'filter'    => $statuses,
                 'value'     => function(Tracking $model) use ($statuses)
                 {
-                    return ($model->status && array_key_exists($model->status, $statuses))
+                    return (isset($model->status) && array_key_exists($model->status, $statuses))
                         ? $statuses[$model->status]
                         : $model->status;
                 }
@@ -76,7 +76,7 @@ $trackerStatuses = Tracking::getTrackerStatusLabels();
                 'filter'    => $trackerStatuses,
                 'value'     => function(Tracking $model) use ($trackerStatuses)
                 {
-                    return ($model->tracker_status && array_key_exists($model->tracker_status, $trackerStatuses))
+                    return (isset($model->tracker_status) && array_key_exists($model->tracker_status, $trackerStatuses))
                         ? $trackerStatuses[$model->tracker_status]
                         : $model->tracker_status;
                 }

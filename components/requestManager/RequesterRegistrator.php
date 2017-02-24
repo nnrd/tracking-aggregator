@@ -25,11 +25,6 @@ class RequesterRegistrator implements Requester
         {
             $api_op->linkTrackings($trackings);
         }
-        else
-        {
-            var_dump($api_op->getErrors());
-        }
-
         $response = $this->instance->send($trackings, $action, $path, $data);
 
         $api_op->code = $response['code'];

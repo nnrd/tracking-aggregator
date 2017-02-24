@@ -50,7 +50,8 @@ class TrackingSearch extends Tracking
      */
     public function search($params)
     {
-        $query = Tracking::find()->joinWith(['category', 'uploadOperation']);
+        $query = Tracking::find()->joinWith(['category', 'uploadOperation'])
+            ->andWhere(['<>', 'tracking.status', self::STATUS_DELETED]);
 
         // add conditions that should always apply here
 

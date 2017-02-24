@@ -35,6 +35,7 @@ class Tracking extends \yii\db\ActiveRecord
     const STATUS_DISABLED = 0; // Do not check tracking
     const STATUS_NORMAL = 1; // Check as usual - check if possible
     const STATUS_URGENT = 2; // Urgent checking - check these first anyway
+    const STATUS_DELETED = -1; // Scheduled to delete from tracking
 
     /**
      * @inheritdoc

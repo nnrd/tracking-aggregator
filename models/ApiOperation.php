@@ -23,6 +23,11 @@ class ApiOperation extends \yii\db\ActiveRecord
     const STATUS_REQUESTED = 0;
     const STATUS_RESPONDED = 1;
 
+
+    const SUG_HOLDOFF = 1;
+
+    public $suggestion = 0;
+
     /**
      * @inheritdoc
      */
@@ -93,5 +98,4 @@ class ApiOperation extends \yii\db\ActiveRecord
         $command = Yii::$app->db->createCommand('INSERT INTO `api_operation_map` (tracking_id, api_operation_id) VALUES ' . implode(',', $values));
         return $command->execute();
     }
-
 }

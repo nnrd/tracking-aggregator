@@ -2,6 +2,7 @@
 namespace app\components\trackerManager;
 
 use Yii;
+use app\models\ApiOperation;
 use app\models\Tracking;
 
 class TrackingmoreHandler extends \yii\base\Component implements Tracker
@@ -22,15 +23,24 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
             $data = ['tracking_number' => $tracking->track_number];
             $response = $this->req->send([$tracking], 'post', '/carriers/detect', $data);
 
-            var_dump($response['json']);
-            if (self::responseSuccess($response) && isset($response['json']->data[0]->code))
+            if (self::responseSuccess($response))
             {
-                $tracking->carrier = $response['json']->data[0]->code;
+                if (isset($response['json']->data[0]->code))
+                {
+                    $tracking->carrier = $response['json']->data[0]->code;
+                    $tracking->updateTracked();
+                    $tracking->save();
+                }
+            }
+            elseif (self::responseFail($response, 4032)) // Bogus carrier, don't mess up anymore
+            {
+                $tracking->status = Tracking::STATUS_DISABLED;
                 $tracking->updateTracked();
                 $tracking->save();
             }
 
             $transaction->commit();
+            self::updateSuggestions($response['api_operation']);
             return $response['api_operation'];
         }
         catch(\Exception $e)
@@ -77,6 +87,7 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
             }
 
             $transaction->commit();
+            self::updateSuggestions($response['api_operation']);
             return $response['api_operation'];
         }
         catch(\Exception $e)
@@ -101,6 +112,7 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
             }
 
             $transaction->commit();
+            self::updateSuggestions($response['api_operation']);
             return $response['api_operation'];
         }
         catch(\Exception $e)
@@ -122,8 +134,15 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
                 $tracking->updateTracked();
                 $tracking->save();
             }
+            elseif (self::responseFail($response, 4017)) // Not found
+            {
+                $tracking->status = Tracking::STATUS_DISABLED;
+                $tracking->updateTracked();
+                $tracking->save();
+            }
 
             $transaction->commit();
+            self::updateSuggestions($response['api_operation']);
             return $response['api_operation'];
         }
         catch(\Exception $e)
@@ -136,6 +155,19 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
     protected static function responseSuccess($response)
     {
         return isset($response['json']->meta->type) && (strcasecmp($response['json']->meta->type, 'success') == 0);
+    }
+
+    protected static function updateSuggestions($apiOp)
+    {
+        if ($apiOp->code == 429)
+        {
+            $apiOp->suggestion = ApiOperation::SUG_HOLDOFF;
+        }
+    }
+
+    protected static function responseFail($response, $code)
+    {
+        return isset($response['json']->meta->code) && ($response['json']->meta->code == $code);
     }
 
 }
