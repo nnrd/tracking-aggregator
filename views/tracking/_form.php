@@ -24,7 +24,7 @@ use app\models\Category;
 
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'track_number')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'track_number')->textInput(['maxlength' => true, 'disabled' => $model->tracker_status]) ?>
         </div>
         <div class="col-md-6">
             <?= $form->field($model, 'status')->dropDownList($model->getStatusLabels()) ?>

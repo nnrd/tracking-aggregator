@@ -43,9 +43,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'status',
                 'value' => isset($model->status) ? $model->getStatusLabels()[$model->status] : null,
             ],
-            'tracker_status',
-            'upload_id',
-            'data:ntext',
+            [
+                'attribute' => 'tracker_status',
+                'value' => isset($model->status) ? $model->getTrackerStatusLabels()[$model->status] : null,
+            ],
+            [
+                'attribute' => 'upload_id',
+                'label' => Yii::t('app', 'Filename'),
+                'format' => 'html',
+                'value' => ($model->upload_id && $model->uploadOperation)
+                ? Html::a($model->uploadOperation->filename, ['uploads/view', 'id' => $model->uploadOperation->id])
+                : $model->upload_id,
+            ],
             'created_at:datetime',
             'updated_at:datetime',
             'tracked_at:datetime',
