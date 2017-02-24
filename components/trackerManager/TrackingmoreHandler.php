@@ -53,8 +53,10 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
     public function registerTrackings($trackings)
     {
         $transaction = Yii::$app->db->beginTransaction();
-        try
-        {
+        /*
+         * try
+         * {
+         */
             $data = [];
             foreach($trackings as $tracking)
             {
@@ -89,12 +91,14 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
             $transaction->commit();
             self::updateSuggestions($response['api_operation']);
             return $response['api_operation'];
-        }
-        catch(\Exception $e)
-        {
-            $transaction->rollback();
-            return false;
-        }
+        /*
+         * }
+         * catch(\Exception $e)
+         * {
+         *     $transaction->rollback();
+         *     return false;
+         * }
+         */
     }
 
     public function checkTracking(Tracking $tracking)
