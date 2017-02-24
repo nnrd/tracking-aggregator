@@ -1,38 +1,30 @@
 <?php
 namespace app\components\requestManager;
 
-use Yii;
-
 class  Manager extends \yii\base\Component
 {
     public $handlerClass;
+    public $requestParams;
 
-    protected $handler;
+    protected $handlerIncstance;
 
     public function init()
     {
         $class = $this->handlerClass;
-        $this->handler = new $class([
-            'baseUrl' => Yii::$app->param['Tracker API']['url'],
+        $requester = new $class([
+            'baseUrl' => $this->requsetParams['url'],
             'headers' => [
                 'Accept' => 'application/json',
-                'Trackingmore-Api-Key' => Yii::$app->param['Tracker API']['token'],
+                'Trackingmore-Api-Key' => $this->requsetParams['token'],
             ],
         ]);
+
+        // Decorate with request operation registrator
+        $this->handlerInstance = new RequesterRegistrator($requester)
     }
 
-    public function get($path, $data = null)
+    public function getRequester()
     {
-        return $this->handler->get($path, $data);
-    }
-
-    public function post($path, $data = null)
-    {
-        return $this->handler->post($path, $data);
-    }
-
-    public function delete($path, $data = null)
-    {
-        return $this->handler->delete($path, $data);
+        return $this->handlerInstance;
     }
 }

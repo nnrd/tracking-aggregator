@@ -1,24 +1,28 @@
 <?php
 namespace app\components\requestManager;
 
-class  UnirestManager extends \yii\base\Component
+class  UnirestManager extends \yii\base\Component implements Requester
 {
     public $baseUrl;
     public $headers;
 
-    public function get($path, $data)
+    public function send($action, $path, $data = null)
     {
-        return $this->normalizeResponse(\Unirest\Reqiest::get($this->baseUrl . $path, $this->headers, $data));
-    }
-
-    public function post($path, $data)
-    {
-        return $this->normalizeResponse(\Unirest\Reqiest::post($this->baseUrl . $path, $this->headers, $data));
-    }
-
-    public function delete($path, $data)
-    {
-        return $this->normalizeResponse(\Unirest\Reqiest::delete($this->baseUrl . $path, $this->headers, $data));
+        switch($action)
+        {
+            case 'get':
+                $response = \Unirest\Reqiest::get($this->baseUrl . $path, $this->headers, $data);
+                break;
+            case 'post':
+                $response = \Unirest\Reqiest::post($this->baseUrl . $path, $this->headers, $data);
+                break;
+            case 'delete':
+                $response = \Unirest\Reqiest::delete($this->baseUrl . $path, $this->headers, $data);
+                break;
+            default:
+                throw new \Exception("Send action `$action` not supported");
+        }
+        return $this->normalizeResponse($response)
     }
 
     protected function normalizeResponse($response)
