@@ -138,7 +138,6 @@ class Tracking extends \yii\db\ActiveRecord
     public static function getTrackerStatusLabels()
     {
         return [
-            "registered",
             "pending",
             "notfound",
             "transit",
