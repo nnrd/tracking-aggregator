@@ -14,9 +14,8 @@ class TrackingmodeHandler extends \yii\base\Component implements Tracker
 
     public function detectCarrier(Tracking $tracking)
     {
-        $response = $this->req->send([$tracking], 'post', '/carrier/detect', [
-            'tracking_number' => $tracker->track_number,
-        ]);
+        $data = ['tracking_number' => $tracker->track_number];
+        $response = $this->req->send([$tracking], 'post', '/carrier/detect', $data);
 
         if (self::responseSuccess($response) isset($response['json']->data[0]->code))
         {
@@ -53,10 +52,24 @@ class TrackingmodeHandler extends \yii\base\Component implements Tracker
                 if (array_key_exists($apiTracking->tracking_number, $trackingMap))
                 {
                     $tracking = $trackingMap[$apiTracking->tracking_number];
-                    $tracking->tracker_status = $apiTracking->status;
+                    $tracking->updateTrackerStatus($apiTracking->status);
                     $tracking->save();
                 }
             }
+            return true;
+        }
+
+        return false;
+    }
+
+    public function checkTracking(Tracking $tracking)
+    {
+        $response = $this->req->send([$tracking], 'get', "/trackings/{$tracking->carrier}/{$tracking->track_number}");
+
+        if (self::responseSuccess($response) && isset($response['json']->data))
+        {
+            $tracking->updateTrackerStatus($response['json']->data->status);
+            $tracking->save();
             return true;
         }
 

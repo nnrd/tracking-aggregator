@@ -246,4 +246,12 @@ class Tracking extends \yii\db\ActiveRecord
         return array_flip(self::getCarrierLabels());
     }
 
+    public function updateTrackerStatus($newStatus)
+    {
+        if (stricmp($newStatus, $this->tracker_status) !=0)
+        {
+            $this->tracker_status = $newStatus;
+        }
+    }
+
 }
