@@ -17,12 +17,11 @@ class TrackingController extends Controller
 
     public function actionDetectCarrier($trackNumber)
     {
-        echo "Detect $trackNumber carrier\n";
         $tracking = Tracking::find()->andWhere(['track_number' => $trackNumber])->one();
         if ($tracking)
         {
-            echo "Tracking found, send request\n";
-            $this->api->detectCarrier($tracking);
+            $op = $this->api->detectCarrier($tracking);
+            print_r(isset($op->response) ? $op->response : 'FAIL');
         }
     }
 
@@ -31,7 +30,8 @@ class TrackingController extends Controller
         $tracking = Tracking::find()->andWhere(['track_number' => $trackNumber])->one();
         if ($tracking)
         {
-            $this->api->registerTrackings([$tracking]);
+            $op = $this->api->registerTrackings([$tracking]);
+            print_r(isset($op->response) ? $op->response : 'FAIL');
         }
     }
 
@@ -40,7 +40,8 @@ class TrackingController extends Controller
         $tracking = Tracking::find()->andWhere(['track_number' => $trackNumber])->one();
         if ($tracking)
         {
-            $this->api->checkTracking($tracking);
+            $op = $this->api->checkTracking($tracking);
+            print_r(isset($op->response) ? $op->response : 'FAIL');
         }
     }
 
@@ -49,7 +50,8 @@ class TrackingController extends Controller
         $tracking = Tracking::find()->andWhere(['track_number' => $trackNumber])->one();
         if ($tracking)
         {
-            $this->api->deleteTracking($tracking);
+            $op = $this->api->deleteTracking($tracking);
+            print_r(isset($op->response) ? $op->response : 'FAIL');
         }
     }
 

@@ -28,17 +28,15 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
                 $tracking->carrier = $response['json']->data[0]->code;
                 $tracking->updateTracked();
                 $tracking->save();
-                $transaction->commit();
-                return true;
             }
 
             $transaction->commit();
-            return false;
+            return $response['api_operation'];
         }
         catch(\Exception $e)
         {
             $transaction->rollback();
-            print_r($e->getMessage());
+            return false;
         }
     }
 
@@ -76,12 +74,10 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
                         $tracking->save();
                     }
                 }
-                $transaction->commit();
-                return true;
             }
 
             $transaction->commit();
-            return false;
+            return $response['api_operation'];
         }
         catch(\Exception $e)
         {
@@ -102,12 +98,10 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
                 $tracking->updateTrackerStatus($response['json']->data->status);
                 $tracking->updateTracked();
                 $tracking->save();
-                $transaction->commit();
-                return true;
             }
 
             $transaction->commit();
-            return false;
+            return $response['api_operation'];
         }
         catch(\Exception $e)
         {
@@ -126,12 +120,11 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
             if (self::responseSuccess($response))
             {
                 $tracking->updateTracked();
-                $transaction->commit();
-                return true;
+                $tracking->save();
             }
 
             $transaction->commit();
-            return false;
+            return $response['api_operation'];
         }
         catch(\Exception $e)
         {
