@@ -95,9 +95,13 @@ class TrackingController extends Controller
             $trackings = $query->all();
             if ($trackings)
             {
-                $op = $this->api->registerTrackings($trackings);
-                $this->apiOpSleep($op);
+                foreach(array_chunk($trackings, 10) as $chunk)
+                {
+                    $op = $this->api->registerTrackings($chunk);
+                    $this->apiOpSleep($op);
+                }
             }
+            $chunk = null;
             $trackings = null;
 
             // Step 3: get statuses
