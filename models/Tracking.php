@@ -128,6 +128,113 @@ class Tracking extends \yii\db\ActiveRecord
     public static function getTrackerStatusLabels()
     {
         return [
+            "registered",
+            "pending",
+            "notfound",
+            "transit",
+            "pickup",
+            "delivered",
+            "undelivered",
+            "exception",
+            "expired",
         ];
     }
+
+    public static function getTrackerStatusCodes()
+    {
+        return array_flip(self::getTrackerStatusLabels());
+    }
+
+    public static function getCarrierLabels()
+    {
+        return [
+            "139express" => "139 ECONOMIC Package",
+            "17postservice	17" => "Post Service",
+            "acscourier" => "ACS Courier",
+            "adicional" => "Adicional Logistics",
+            "aramex" => "Aramex",
+            "armenia-post" => "Armenia post",
+            "asendia-de" => "Asendia Germany",
+            "austria-post" => "Austrian Post",
+            "azerbaijan-post" => "Azerbaijan post",
+            "bartolini" => "BRT Bartolini",
+            "belgium-post" => "Belgium post",
+            "belpochta" => "Belarus post",
+            "bosnia-and-herzegovina-post" => "Bosnia and Herzegovina post",
+            "brazil-correios" => "Brazil Correios",
+            "canada-post" => "Canada post",
+            "canpar" => "Canpar Courier",
+            "china-ems" => "China EMS",
+            "chronopost" => "France EMS - Chronopost",
+            "cnexps" => "CNE Express",
+            "colissimo" => "French Post - Colissimo",
+            "correo-argentino" => "Argentina post",
+            "correos-bolivia" => "Bolivia post",
+            "correos-spain" => "correos",
+            "ctt" => "Portugal post - CTT",
+            "czech-post" => "Česká Pošta",
+            "denmark-post" => "Denmark post",
+            "dhl" => "DHL",
+            "dhl-active" => "DHL Active Tracing",
+            "dhl-es" => "DHL Spain Domestic",
+            "dhl-germany" => "Deutsche Post DHL",
+            "dhl-poland" => "DHL Poland Domestic",
+            "dhlglobalmail" => "DHL eCommerce",
+            "dhlparcel-nl" => "DHL Parcel Netherlands",
+            "dpd" => "DPD",
+            "ecargo-asia" => "Ecargo",
+            "emirates-post" => "Emirates Post",
+            "fedex" => "Fedex",
+            "finland-posti" => "Finland post - Posti",
+            "georgian-post" => "Georgia post",
+            "gls" => "GLS",
+            "gls-italy" => "GLS Italy",
+            "greece-post" => "ELTA Hellenic Post",
+            "hong-kong-post" => "Hong Kong Post",
+            "iceland-post" => "Iceland post",
+            "israel-post" => "Israel post",
+            "israel-post" => "Israel post",
+            "japan-post" => "Japan post",
+            "jcex" => "JCEX",
+            "kazpost" => "Kazakhstan post",
+            "kerry-logistics" => "Kerry Express",
+            "korea-post" => "Korea Post",
+            "kyrgyzpost" => "Kyrgyzstan post",
+            "latvijas-pasts" => "Latvia post",
+            "lietuvos-pastas" => "Lithuania post",
+            "luxembourg-post" => "Luxembourg post",
+            "macao-post" => "Macao Post",
+            "malaysia-post" => "Malaysia post",
+            "matkahuolto" => "Matkahuolto",
+            "moldova-post" => "Moldova post",
+            "omniva" => "Estonia post",
+            "pfcexpress" => "PFC Express",
+            "poczta-polska" => "Poland post",
+            "posten-norge" => "Posten Norge",
+            "purolator" => "Purolator",
+            "saudi-post" => "Saudi Post",
+            "serbia-post" => "Serbia post",
+            "sf-express" => "S.F Express",
+            "sfb2c" => "S.F International",
+            "sfcservice" => "SFC Service",
+            "slovakia-post" => "Slovakia post",
+            "sweden-posten" => "Sweden Posten",
+            "swiss-post" => "Swiss Post",
+            "taqbin-jp" => "Yamato Japan",
+            "taxydromiki" => "Geniki Taxydromiki",
+            "tnt" => "TNT",
+            "tunisia-post" => "Tunisia post",
+            "turkey-post" => "Turkey post",
+            "ups" => "UPS",
+            "vietnam-post" => "Vietnam post",
+            "wishpost" => "WishPost",
+            "yanwen" => "YANWEN",
+        ];
+    }
+
+    public function getCarrierCodes()
+    {
+        return array_flip(self::getCarrierLabels());
+    }
+
 }

@@ -28,7 +28,7 @@ class TrackingSearch extends Tracking
         return [
             [['id', 'category_id', 'status', 'tracker_status', 'upload_id'], 'integer'],
             [['order_id', 'track_number', 'first_name', 'last_name', 'data', 'created_at', 'updated_at', 'tracked_at', 'delivered_at'], 'safe'],
-            [['created_range','updated_range', 'tracked_range', 'delivered_range', 'filename'], 'safe'],
+            [['created_range','updated_range', 'tracked_range', 'delivered_range', 'filename', 'carrier'], 'safe'],
         ];
     }
 

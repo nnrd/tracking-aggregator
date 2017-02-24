@@ -12,6 +12,11 @@ use app\models\Category;
 
 $this->title = 'Trackings';
 $this->params['breadcrumbs'][] = $this->title;
+
+$carriers = Tracking::getCarrierLabels();
+$statuses = Tracking::getStatusLabels();
+$trackerStatuses = Tracking::getTrackerStatusLabels();
+
 ?>
 <div class="tracking-index">
 
@@ -44,25 +49,35 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['style' => 'width:20%'],
             ],
             'track_number',
+            [
+                'attribute' => 'carrier',
+                'filter'    => $carriers,
+                'value'     => function(Tracking $model) use ($carriers)
+                {
+                    return ($model->carrier && array_key_exists($model->carrier, $carriers))
+                        ? $carriers[$model->carrier]
+                        : $model->carrier;
+                }
+            ],
             'first_name',
             'last_name',
             [
                 'attribute' => 'status',
-                'filter'    => Tracking::getStatusLabels(),
-                'value'     => function(Tracking $model)
+                'filter'    => $statuses,
+                'value'     => function(Tracking $model) use ($statuses)
                 {
-                    return ($model->status && array_key_exists($model->status, Tracking::getStatusLabels()))
-                        ? Tracking::getStatusLabels()[$model->status]
+                    return ($model->status && array_key_exists($model->status, $statuses))
+                        ? $statuses[$model->status]
                         : $model->status;
                 }
             ],
             [
                 'attribute' => 'tracker_status',
-                'filter'    => Tracking::getTrackerStatusLabels(),
-                'value'     => function(Tracking $model)
+                'filter'    => $trackerStatuses,
+                'value'     => function(Tracking $model) use ($trackerStatuses)
                 {
-                    return ($model->tracker_status && array_key_exists($model->tracker_status, Tracking::getTrackerStatusLabels()))
-                        ? Tracking::getStatusLabels()[$model->tracker_status]
+                    return ($model->tracker_status && array_key_exists($model->tracker_status, $trackerStatuses))
+                        ? $trackerStatuses[$model->tracker_status]
                         : $model->tracker_status;
                 }
             ],
