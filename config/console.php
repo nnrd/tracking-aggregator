@@ -20,6 +20,15 @@ $config = [
                 ],
             ],
         ],
+        'requestManager' => [
+            'class' => \app\components\requestManager\Manager::class,
+            // 'handlerClass' =>  \app\components\requestManager\UnirestHandler::class,
+            'handlerClass' =>  \app\components\requestManager\DummyHandler::class,
+        ],
+        'trackerManager' => [
+            'class' => \app\components\trackerManager\Manager::class,
+            'handlerClass' => \app\components\trackerManager\TrackingmoreHandler::class,
+        ],
         'db' => $db,
     ],
     'params' => $params,
