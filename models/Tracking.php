@@ -108,6 +108,16 @@ class Tracking extends \yii\db\ActiveRecord
         return $this->hasOne(Category::className(), ['id' => 'category_id']);
     }
 
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getApiOperations()
+    {
+        return $this->hasMany(ApiOperation::className(), ['id' => 'api_operation_id'])
+            ->viaTable('api_operation_map', ['tracking_id', 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

@@ -6,7 +6,7 @@ class  UnirestManager extends \yii\base\Component implements Requester
     public $baseUrl;
     public $headers;
 
-    public function send($action, $path, $data = null)
+    public function send($tracking, $action, $path, $data = null)
     {
         switch($action)
         {

@@ -3,5 +3,5 @@ namespace app\components\requestManager;
 
 interface Requester
 {
-    public function send($action, $path, $data = null);
+    public function send($trackings, $action, $path, $data = null);
 }
