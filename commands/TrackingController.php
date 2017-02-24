@@ -129,10 +129,13 @@ class TrackingController extends Controller
 
     public function actionCleanup()
     {
+
+        // Step 1: Wipe out all deleted
         $query = Tracking::find()->andWhere([
             'status' => Tracking::STATUS_DELETED,
         ])->orderBy('updated_at ASC');
 
+        $requested = 0;
         if (isset($this->api->requestParams['limits']['cleanup']))
         {
             $query->limit($this->api->requestParams['limits']['cleanup']);
@@ -143,6 +146,34 @@ class TrackingController extends Controller
             if ($op->code == 200)
             {
                 $tracking->delete();
+                $requested++;
+            }
+            $this->apiOpSleep($op);
+        }
+
+        if (isset($this->api->requestParams['limits']['cleanup']) && $requested >= $this->api->requestParams['limits']['cleanup'] )
+        {
+            return;
+        }
+
+        // Step 2: Untrack delivered
+        $codes = Tracking::getTrackerStatusCodes();
+
+        $query = Tracking::find()->andWhere([
+            'tracker_status' => $codes['delivered']
+        ])->orderBy('tracked_at ASC');
+
+        if (isset($this->api->requestParams['limits']['cleanup']))
+        {
+            $query->limit($this->api->requestParams['limits']['cleanup'] - $requested);
+        }
+        foreach($query->all() as $tracking)
+        {
+            $op = $this->api->deleteTracking($tracking);
+            if ($op->code == 200)
+            {
+                $tracking->status = Tracking::STATUS_DISABLED;
+                $tracking->save();
             }
             $this->apiOpSleep($op);
         }
