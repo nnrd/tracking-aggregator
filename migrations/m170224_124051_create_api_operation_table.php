@@ -14,6 +14,7 @@ class m170224_124051_create_api_operation_table extends Migration
     {
         $this->createTable('api_operation', [
             'id' => $this->primaryKey(),
+            'action' => 'char(8) not null',
             'url' => 'varchar(255) not null',
             'path' => 'varchar(255) not null',
             'status' => 'tinyint not null',

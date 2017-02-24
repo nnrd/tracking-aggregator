@@ -15,16 +15,22 @@ class RequesterRegistrator implements Requester
     public function send($trackings, $action, $path, $data = null)
     {
         $api_op = new ApiOperation([
-            'url' => $instance->url,
+            'action' => $action,
+            'url' => $this->instance->baseUrl,
             'path' => $path,
-            'request' => $data,
+            'request' => json_encode($data),
             'status' => ApiOperation::STATUS_REQUESTED,
         ]);
-        $api_op->save();
+        if ($api_op->save())
+        {
+            $api_op->linkTrackings($trackings);
+        }
+        else
+        {
+            var_dump($api_op->getErrors());
+        }
 
-        $api_op->liskTrackings($trackings);
-
-        $response = $this->instance->send($action, $path, $data);
+        $response = $this->instance->send($trackings, $action, $path, $data);
 
         $api_op->code = $response['code'];
         $api_op->response = $response['body'];

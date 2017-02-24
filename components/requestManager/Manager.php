@@ -4,27 +4,19 @@ namespace app\components\requestManager;
 class  Manager extends \yii\base\Component
 {
     public $handlerClass;
-    public $requestParams;
 
-    protected $handlerIncstance;
-
-    public function init()
+    public function getRequester($requestParams)
     {
         $class = $this->handlerClass;
         $requester = new $class([
-            'baseUrl' => $this->requsetParams['url'],
+            'baseUrl' => $requestParams['url'],
             'headers' => [
                 'Accept' => 'application/json',
-                'Trackingmore-Api-Key' => $this->requsetParams['token'],
+                'Content-Type' => 'application/json',
+                'Trackingmore-Api-Key' => $requestParams['token'],
             ],
         ]);
 
-        // Decorate with request operation registrator
-        $this->handlerInstance = new RequesterRegistrator($requester)
-    }
-
-    public function getRequester()
-    {
-        return $this->handlerInstance;
+        return new RequesterRegistrator($requester);
     }
 }

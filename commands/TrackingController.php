@@ -1,6 +1,7 @@
 <?php
 namespace app\commands;
 
+use Yii;
 use yii\console\Controller;
 use app\models\Tracking;
 
@@ -16,9 +17,11 @@ class TrackingController extends Controller
 
     public function actionDetectCarrier($trackNumber)
     {
+        echo "Detect $trackNumber carrier\n";
         $tracking = Tracking::find()->andWhere(['track_number' => $trackNumber])->one();
         if ($tracking)
         {
+            echo "Tracking found, send request\n";
             $this->api->detectCarrier($tracking);
         }
     }
@@ -41,5 +44,17 @@ class TrackingController extends Controller
         }
     }
 
+    public function actionDelete($trackNumber)
+    {
+        $tracking = Tracking::find()->andWhere(['track_number' => $trackNumber])->one();
+        if ($tracking)
+        {
+            $this->api->deleteTracking($tracking);
+        }
+    }
 
+    public function process()
+    {
+
+    }
 }

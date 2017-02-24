@@ -15,13 +15,16 @@ class Manager extends \yii\base\Component
     {
         $handlerParams = [
             DummyHandler::class => [ 'params' => [], ],
-            TrackingmodeHandler::class => [
+            TrackingmoreHandler::class => [
                 'params' => Yii::$app->params['trackers']['trackingmore'],
             ],
         ];
 
-        $class = $handlerParams[$this->handler]['class'];
-        $this->handlerInstance = new $class(['requestParams' => $handlerParams[$this->handler]['params']]);
+
+        $class = $this->handlerClass;
+        $this->handlerInstance = new $class([
+            'requestParams' => $handlerParams[$class]['params']
+         ]);
     }
 
     public function getApi()

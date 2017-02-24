@@ -1,84 +1,148 @@
 <?php
 namespace app\components\trackerManager;
 
+use Yii;
 use app\models\Tracking;
 
-class TrackingmodeHandler extends \yii\base\Component implements Tracker
+class TrackingmoreHandler extends \yii\base\Component implements Tracker
 {
+    public $requestParams;
     protected $req;
 
     public function init()
     {
-        $this->req = Yii::$app->requestManager->getRequester();
+        $this->req = Yii::$app->requestManager->getRequester($this->requestParams);
     }
 
     public function detectCarrier(Tracking $tracking)
     {
-        $data = ['tracking_number' => $tracker->track_number];
-        $response = $this->req->send([$tracking], 'post', '/carrier/detect', $data);
-
-        if (self::responseSuccess($response) isset($response['json']->data[0]->code))
+        $transaction = Yii::$app->db->beginTransaction();
+        try
         {
-            $tracking->carrier = $response['json']->data[0]->code;
-            return true;
-        }
+            $data = ['tracking_number' => $tracking->track_number];
+            $response = $this->req->send([$tracking], 'post', '/carriers/detect', $data);
 
-        return false;
+            var_dump($response['json']);
+            if (self::responseSuccess($response) && isset($response['json']->data[0]->code))
+            {
+                $tracking->carrier = $response['json']->data[0]->code;
+                $tracking->updateTracked();
+                $tracking->save();
+                $transaction->commit();
+                return true;
+            }
+
+            $transaction->commit();
+            return false;
+        }
+        catch(\Exception $e)
+        {
+            $transaction->rollback();
+            print_r($e->getMessage());
+        }
     }
 
     public function registerTrackings($trackings)
     {
-        $data = [];
-        foreach($trackings as $tracking)
+        $transaction = Yii::$app->db->beginTransaction();
+        try
         {
-            $data[] = [
-                'tracking_number' => $tracking->tracking_number,
-                'carrier_code' => $tracking->carrier,
-            ];
-        }
-
-        $response = $this->req->send($trackings, 'post', '/trackings/batch', $data);
-
-        if (self::responseSuccess($response) && isset($response['json']->data->trackings))
-        {
-            $trackingMap = [];
+            $data = [];
             foreach($trackings as $tracking)
             {
-                $trackingMap[$tracking->track_number] = $tracking;
+                $data[] = [
+                    'tracking_number' => $tracking->track_number,
+                    'carrier_code' => $tracking->carrier,
+                ];
             }
 
-            foreach($response['json']->data->trackngs as $apiTracking)
+            $response = $this->req->send($trackings, 'post', '/trackings/batch', $data);
+
+            if (self::responseSuccess($response) && isset($response['json']->data->trackings))
             {
-                if (array_key_exists($apiTracking->tracking_number, $trackingMap))
+                $trackingMap = [];
+                foreach($trackings as $tracking)
                 {
-                    $tracking = $trackingMap[$apiTracking->tracking_number];
-                    $tracking->updateTrackerStatus($apiTracking->status);
-                    $tracking->save();
+                    $trackingMap[$tracking->track_number] = $tracking;
                 }
-            }
-            return true;
-        }
 
-        return false;
+                foreach($response['json']->data->trackings as $apiTracking)
+                {
+                    if (array_key_exists($apiTracking->tracking_number, $trackingMap))
+                    {
+                        $tracking = $trackingMap[$apiTracking->tracking_number];
+                        $tracking->updateTrackerStatus($apiTracking->status);
+                        $tracking->updateTracked();
+                        $tracking->save();
+                    }
+                }
+                $transaction->commit();
+                return true;
+            }
+
+            $transaction->commit();
+            return false;
+        }
+        catch(\Exception $e)
+        {
+            $transaction->rollback();
+            return false;
+        }
     }
 
     public function checkTracking(Tracking $tracking)
     {
-        $response = $this->req->send([$tracking], 'get', "/trackings/{$tracking->carrier}/{$tracking->track_number}");
-
-        if (self::responseSuccess($response) && isset($response['json']->data))
+        $transaction = Yii::$app->db->beginTransaction();
+        try
         {
-            $tracking->updateTrackerStatus($response['json']->data->status);
-            $tracking->save();
-            return true;
-        }
+            $response = $this->req->send([$tracking], 'get', "/trackings/{$tracking->carrier}/{$tracking->track_number}");
 
-        return false;
+            if (self::responseSuccess($response) && isset($response['json']->data))
+            {
+                $tracking->updateTrackerStatus($response['json']->data->status);
+                $tracking->updateTracked();
+                $tracking->save();
+                $transaction->commit();
+                return true;
+            }
+
+            $transaction->commit();
+            return false;
+        }
+        catch(\Exception $e)
+        {
+            $transaction->rollback();
+            return false;
+        }
+    }
+
+    public function deleteTracking(Tracking $tracking)
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        try
+        {
+            $response = $this->req->send([$tracking], 'delete', "/trackings/{$tracking->carrier}/{$tracking->track_number}");
+
+            if (self::responseSuccess($response))
+            {
+                $tracking->updateTracked();
+                $transaction->commit();
+                return true;
+            }
+
+            $transaction->commit();
+            return false;
+        }
+        catch(\Exception $e)
+        {
+            $transaction->rollback();
+            return false;
+        }
     }
 
     protected static function responseSuccess($response)
     {
-        return isset($response['json']->meta->type) && (stricmp($response['json']->meta->type, 'success') == 0);
+        return isset($response['json']->meta->type) && (strcasecmp($response['json']->meta->type, 'success') == 0);
     }
 
 }

@@ -1,37 +1,39 @@
 <?php
 namespace app\components\requestManager;
 
-class  UnirestManager extends \yii\base\Component implements Requester
+class  UnirestHandler extends \yii\base\Component implements Requester
 {
     public $baseUrl;
     public $headers;
 
     public function send($tracking, $action, $path, $data = null)
     {
+        $body = \Unirest\Request\Body::json($data);
+
         switch($action)
         {
             case 'get':
-                $response = \Unirest\Reqiest::get($this->baseUrl . $path, $this->headers, $data);
+                $response = \Unirest\Request::get($this->baseUrl . $path, $this->headers, $body);
                 break;
             case 'post':
-                $response = \Unirest\Reqiest::post($this->baseUrl . $path, $this->headers, $data);
+                $response = \Unirest\Request::post($this->baseUrl . $path, $this->headers, $body);
                 break;
             case 'delete':
-                $response = \Unirest\Reqiest::delete($this->baseUrl . $path, $this->headers, $data);
+                $response = \Unirest\Request::delete($this->baseUrl . $path, $this->headers, $body);
                 break;
             default:
                 throw new \Exception("Send action `$action` not supported");
         }
-        return $this->normalizeResponse($response)
+        return $this->normalizeResponse($response);
     }
 
     protected function normalizeResponse($response)
     {
         return [
-            'code'    => $result->code,
-            'headers' => $result->headers,
-            'json'    => $result->body,
-            'body'    => $result->raw_body,
+            'code'    => $response->code,
+            'headers' => $response->headers,
+            'json'    => $response->body,
+            'body'    => $response->raw_body,
         ];
     }
 }

@@ -248,10 +248,27 @@ class Tracking extends \yii\db\ActiveRecord
 
     public function updateTrackerStatus($newStatus)
     {
-        if (stricmp($newStatus, $this->tracker_status) !=0)
+        $codes = self::getTrackerStatusCodes();
+        if (array_key_exists($newStatus, $codes))
         {
-            $this->tracker_status = $newStatus;
+            $newCode = $codes[$newStatus];
+            if ($newCode !== $this->tracker_status)
+            {
+                $this->tracker_status = $newCode;
+                if ($newCode == $codes['delivered'])
+                {
+                    $this->delivered_at = time();
+                }
+            }
+        }
+        else
+        {
+            // Exception?
         }
     }
 
+    public function updateTracked()
+    {
+        $this->tracked_at = time();
+    }
 }

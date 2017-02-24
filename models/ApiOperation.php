@@ -9,9 +9,10 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "api_operation".
  *
  * @property integer $id
- * @property integer $status
+ * @property string $action
  * @property string $url
  * @property string $path
+ * @property integer $status
  * @property string $request
  * @property integer $code
  * @property string $response
@@ -36,9 +37,10 @@ class ApiOperation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['url', 'path'], 'required'],
+            [['url', 'path', 'status', 'action'], 'required'],
+            [['action'], 'string', 'max' => 8],
             [['code'], 'integer'],
-            [['status'], 'integer', 'max' => 255, 'required'],
+            [['status'], 'integer', 'max' => 255],
             [['request', 'response'], 'string'],
             [['url', 'path'], 'string', 'max' => 255],
         ];
@@ -88,7 +90,7 @@ class ApiOperation extends \yii\db\ActiveRecord
             $values[] = sprintf('(%d, %d)', (int) $tracking->id, (int) $this->id);
         }
 
-        $command = Yii::$app->createCommand('INSERT INTO `api_operation_map` (tracking_id, api_operation_id) VALUES ' . implode(',', $values));
+        $command = Yii::$app->db->createCommand('INSERT INTO `api_operation_map` (tracking_id, api_operation_id) VALUES ' . implode(',', $values));
         return $command->execute();
     }
 
