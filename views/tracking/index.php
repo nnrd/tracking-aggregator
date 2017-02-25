@@ -66,7 +66,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             'last_name',
             [
                 'attribute' => 'status',
-                'format'    => 'html',
+                'format'    => 'raw',
                 'filter'    => $statuses,
                 'value'     => function(Tracking $model) use ($statuses, $statusWarnings)
                 {
@@ -78,7 +78,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             [
                 'attribute' => 'tracker_status',
                 'filter'    => $searchModel->getTrackerStatusLabels(),
-                'format'    => 'html',
+                'format'    => 'raw',
                 'value'     => function(Tracking $model) use ($trackerStatuses, $trackerStatusWarnings)
                 {
                     return (isset($model->tracker_status) && array_key_exists($model->tracker_status, $trackerStatuses))
@@ -98,7 +98,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             ],
             [
                 'attribute' => 'created_at',
-                'format' => 'html',
+                'format' => 'raw',
                 'value' => function(Tracking $model) {
                     return Yii::$app->formatter->asDateTime($model->created_at);
                 },
@@ -115,7 +115,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             ],
             [
                 'attribute' => 'updated_at',
-                'format' => 'html',
+                'format' => 'raw',
                 'value' => function(Tracking $model) {
                     return Yii::$app->formatter->asDateTime($model->updated_at);
                 },
@@ -132,7 +132,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             ],
             [
                 'attribute' => 'tracked_at',
-                'format' => 'html',
+                'format' => 'raw',
                 'value' => function(Tracking $model) {
                     return Yii::$app->formatter->asDateTime($model->tracked_at);
                 },
@@ -149,7 +149,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             ],
             [
                 'attribute' => 'delivered_at',
-                'format' => 'html',
+                'format' => 'raw',
                 'value' => function(Tracking $model) {
                     return Yii::$app->formatter->asDateTime($model->delivered_at);
                 },
