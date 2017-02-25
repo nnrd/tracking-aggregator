@@ -56,12 +56,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'status',
                         'format' => 'html',
-                        'value' => isset($model->status) ? Html::bsalert($model->getStatusLabels()[$model->status], $model->getStatusWarningLevels()[$model->status]) : null,
+                        'value' => isset($model->status) ? Html::bslabel($model->getStatusLabels()[$model->status], $model->getStatusWarningLevels()[$model->status]) : null,
                     ],
                     [
                         'attribute' => 'tracker_status',
                         'format' => 'html',
-                        'value' => isset($model->status) ? Html::bsalert($model->getTrackerStatusLabels()[$model->status], $model->getTrackerStatusWarningLevels()[$model->status]) : null,
+                        'value' => isset($model->status) ? Html::bslabel($model->getTrackerStatusLabels()[$model->status], $model->getTrackerStatusWarningLevels()[$model->status]) : null,
                     ],
                 ],
             ]) ?>

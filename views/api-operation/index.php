@@ -43,8 +43,8 @@ $statusWarnings = $searchModel->getStatusWarningLevels();
                 'value'     => function(ApiOperation $model) use ($statuses, $statusWarnings)
                 {
                     return (isset($model->status) && array_key_exists($model->status, $statuses))
-                        ? Html::bsalert($statuses[$model->status], $statusWarnings[$model->status])
-                        : Html::bsalert($model->status, 'unimportant');
+                        ? Html::bslabel($statuses[$model->status], $statusWarnings[$model->status])
+                        : Html::bslabel($model->status, 'unimportant');
                 }
             ],
             'request:ntext',

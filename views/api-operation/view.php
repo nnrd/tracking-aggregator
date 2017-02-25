@@ -80,6 +80,9 @@ if ($model->parseResponse())
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
+                    'url',
+                    'path',
+                    'action',
                     [
                         'attribute' => 'status',
                         'format' => 'html',

@@ -126,8 +126,8 @@ a.desc:after {
 }
 
 .label-unimportant {
-    background-color: #999;
-    border-color: #666;
+    background-color: #ddd;
+    border-color: #999;
 }
 
 .alert.tight {
