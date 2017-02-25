@@ -49,7 +49,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
                     });
                     return implode(' / ', $categories);
                 },
-                'headerOptions' => ['style' => 'width:20%'],
+                'headerOptions' => ['style' => 'width:10%'],
             ],
             'track_number',
             [
