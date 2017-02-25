@@ -159,9 +159,12 @@ class TrackingController extends Controller
         // Step 2: Untrack delivered
         $codes = Tracking::getTrackerStatusCodes();
 
-        $query = Tracking::find()->andWhere([
-            'tracker_status' => $codes['delivered']
-        ])->orderBy('tracked_at ASC');
+        $query = Tracking::find()
+            ->andWhere([
+                'tracker_status' => $codes['delivered'],
+                'status' => [self::STATUS_NORMAL, self::STATUS_URGENT],
+            ])
+            ->orderBy('tracked_at ASC');
 
         if (isset($this->api->requestParams['limits']['cleanup']))
         {
