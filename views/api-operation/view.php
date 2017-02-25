@@ -110,18 +110,18 @@ if ($model->parseResponse())
             ]) ?>
         </div>
     </div>
-    <?php if ($originTrackInfo) {
-        echo '<h2>Origin tracking information</h2>';
-        foreach($originTrackInfo as $info) {?>
+    <?php if ($destinationTrackInfo) {
+        echo '<h2>Destination tracking information</h2>';
+        foreach($destinationTrackInfo as $info) {?>
         <div class="alert alert-unimportant">
             <span><strong><?= $info->Date ?></strong> <?= $info->Details ?></span><br>
             <span><strong>Description:</strong> <?= $info->StatusDescription ?></span><br>
         </div>
     <?php } } ?>
 
-    <?php if ($destinationTrackInfo) {
-        echo '<h2>Destination tracking information</h2>';
-        foreach($destinationTrackInfo as $info) {?>
+    <?php if ($originTrackInfo) {
+        echo '<h2>Origin tracking information</h2>';
+        foreach($originTrackInfo as $info) {?>
         <div class="alert alert-unimportant">
             <span><strong><?= $info->Date ?></strong> <?= $info->Details ?></span><br>
             <span><strong>Description:</strong> <?= $info->StatusDescription ?></span><br>
