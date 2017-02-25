@@ -125,6 +125,11 @@ a.desc:after {
     border-color: #999;
 }
 
+.label-unimportant {
+    background-color: #999;
+    border-color: #666;
+}
+
 .alert.tight {
     margin-top: 0px;
     margin-bottom: 0px;

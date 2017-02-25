@@ -71,8 +71,8 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
                 'value'     => function(Tracking $model) use ($statuses, $statusWarnings)
                 {
                     return (isset($model->status) && array_key_exists($model->status, $statuses))
-                        ? Html::bsalert($statuses[$model->status], $statusWarnings[$model->status])
-                        : Html::bsalert($model->status, 'unimportant');
+                        ? Html::bslabel($statuses[$model->status], $statusWarnings[$model->status])
+                        : Html::bslabel($model->status, 'unimportant');
                 }
             ],
             [
@@ -82,8 +82,8 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
                 'value'     => function(Tracking $model) use ($trackerStatuses, $trackerStatusWarnings)
                 {
                     return (isset($model->tracker_status) && array_key_exists($model->tracker_status, $trackerStatuses))
-                        ? Html::bsalert($trackerStatuses[$model->tracker_status], $trackerStatusWarnings[$model->tracker_status])
-                        : Html::bsalert($model->tracker_status, 'unimportant');
+                        ? Html::bslabel($trackerStatuses[$model->tracker_status], $trackerStatusWarnings[$model->tracker_status])
+                        : Html::bslabel($model->tracker_status, 'unimportant');
                 }
             ],
             [
