@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'tracker_status',
                         'format' => 'html',
-                        'value' => isset($model->trackerStatus) ? Html::bslabel($model->getTrackerStatusLabels()[$model->trackerStatus], $model->getTrackerStatusWarningLevels()[$model->trackerStatus]) : null,
+                        'value' => isset($model->tracker_status) ? Html::bslabel($model->getTrackerStatusLabels()[$model->tracker_status], $model->getTrackerStatusWarningLevels()[$model->tracker_status]) : null,
                     ],
                 ],
             ]) ?>
