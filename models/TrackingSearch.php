@@ -15,6 +15,7 @@ class TrackingSearch extends Tracking
 
     const TRACKER_STATUS_NOT_DELIVERED = 1000;
     const TRACKER_STATUS_STUCK = 1001;
+    const TRACKER_STATUS_NULL = 1002;
 
 
     public $created_range;
@@ -144,6 +145,7 @@ class TrackingSearch extends Tracking
 
         $labels[self::TRACKER_STATUS_NOT_DELIVERED] = 'All not delivered';
         $labels[self::TRACKER_STATUS_STUCK] = 'All failed';
+        $labels[self::TRACKER_STATUS_NULL] = 'All not tracked';
 
         return $labels;
     }
@@ -155,6 +157,9 @@ class TrackingSearch extends Tracking
 
         switch ($this->tracker_status)
         {
+            case self::TRACKER_STATUS_NULL:
+                $query->andWhere('tracker_status IS NULL');
+                return;
             case self::TRACKER_STATUS_NOT_DELIVERED:
                 $query->andWhere('tracker_status IS NOT NULL')->andFilterWhere(['<>', 'tracker_status', $codes['delivered']]);
                 return;
