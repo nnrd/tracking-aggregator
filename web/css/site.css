@@ -121,13 +121,13 @@ a.desc:after {
 }
 
 .alert-unimportant {
-    background-color: #ddd;
-    border-color: #999;
+    background-color: #eee;
+    border-color: #ddd;
 }
 
 .label-unimportant {
-    background-color: #ddd;
-    border-color: #999;
+    background-color: #999;
+    border-color: #666;
 }
 
 .alert.tight {
