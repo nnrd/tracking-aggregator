@@ -8,15 +8,12 @@ use app\models\Tracking;
 /* @var $model app\models\ApiOperation */
 
 $fmt = Yii::$app->formatter;
-
 $statuses = $model->getStatusLabels();
 $statusWarnings = $model->getStatusWarningLevels();
 
 $trackerStatuses = Tracking::getTrackerStatusLabels();
 $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
 $codes = Tracking::getTrackerStatusCodes();
-
-
 
 ?>
 <div class="api-operation-widget">

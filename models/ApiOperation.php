@@ -29,7 +29,8 @@ class ApiOperation extends \yii\db\ActiveRecord
     public $suggestion = 0;
 
     public $trackStatus;
-    public $trackInfo;
+    public $originTrackInfo;
+    public $destinationTrackInfo;
 
     /**
      * @inheritdoc
@@ -78,6 +79,7 @@ class ApiOperation extends \yii\db\ActiveRecord
             'request' => Yii::t('app', 'Request body'),
             'code' => Yii::t('app', 'Response code'),
             'response' => Yii::t('app', 'Response body'),
+            'trackStatus' => Yii::t('app', 'Tracking status'),
         ];
     }
 
@@ -129,7 +131,10 @@ class ApiOperation extends \yii\db\ActiveRecord
                     $this->trackStatus = $json->data->status;
                 }
                 if (isset($json->data->origin_info->trackinfo)) {
-                    $this->trackInfo = $json->data->origin_info->track_info;
+                    $this->originTrackInfo = $json->data->origin_info->trackinfo;
+                }
+                if (isset($json->data->destination_info->trackinfo)) {
+                    $this->destinationTrackInfo = $json->data->destination_info->trackinfo;
                 }
                 return true;
             }
