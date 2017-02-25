@@ -119,3 +119,8 @@ a.desc:after {
         width: 1350px;
     }
 }
+
+.alert-unimportant {
+    background-color: #ddd;
+    border-color: #999;
+}

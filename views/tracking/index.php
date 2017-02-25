@@ -4,6 +4,7 @@ use app\components\Html;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
 use app\models\Tracking;
+use app\models\TrackingSearch;
 use app\models\Category;
 
 /* @var $this yii\web\View */
@@ -15,7 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $carriers = Tracking::getCarrierLabels();
 $statuses = Tracking::getStatusLabels();
+$statusWarnings = Tracking::getStatusWarningLevels();
 $trackerStatuses = Tracking::getTrackerStatusLabels();
+$trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
 
 ?>
 <div class="tracking-index">
@@ -63,22 +66,24 @@ $trackerStatuses = Tracking::getTrackerStatusLabels();
             'last_name',
             [
                 'attribute' => 'status',
+                'format'    => 'html',
                 'filter'    => $statuses,
-                'value'     => function(Tracking $model) use ($statuses)
+                'value'     => function(Tracking $model) use ($statuses, $statusWarnings)
                 {
                     return (isset($model->status) && array_key_exists($model->status, $statuses))
-                        ? $statuses[$model->status]
-                        : $model->status;
+                        ? Html::bsalert($statuses[$model->status], $statusWarnings[$model->status])
+                        : Html::bsalert($model->status, 'unimportant');
                 }
             ],
             [
                 'attribute' => 'tracker_status',
-                'filter'    => $trackerStatuses,
-                'value'     => function(Tracking $model) use ($trackerStatuses)
+                'filter'    => $searchModel->getTrackerStatusLabels(),
+                'format'    => 'html',
+                'value'     => function(Tracking $model) use ($trackerStatuses, $trackerStatusWarnings)
                 {
                     return (isset($model->tracker_status) && array_key_exists($model->tracker_status, $trackerStatuses))
-                        ? $trackerStatuses[$model->tracker_status]
-                        : $model->tracker_status;
+                        ? Html::bsalert($trackerStatuses[$model->tracker_status], $trackerStatusWarnings[$model->tracker_status])
+                        : Html::bsalert($model->tracker_status, 'unimportant');
                 }
             ],
             [

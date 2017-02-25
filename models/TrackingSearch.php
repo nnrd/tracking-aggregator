@@ -13,6 +13,10 @@ use app\models\Tracking;
 class TrackingSearch extends Tracking
 {
 
+    const TRACKER_STATUS_NOT_DELIVERED = 1000;
+    const TRACKER_STATUS_STUCK = 1001;
+
+
     public $created_range;
     public $updated_range;
     public $tracked_range;
@@ -82,9 +86,12 @@ class TrackingSearch extends Tracking
         $query->andFilterWhere([
             'tracking.id' => $this->id,
             'tracking.status' => $this->status,
-            'tracker_status' => $this->tracker_status,
             'upload_id' => $this->upload_id,
         ]);
+
+
+        $this->filterTrackerStatus($query);
+
 
         $this->filterDateField($query,'created_range', 'tracking.created_at');
         $this->filterDateField($query,'updated_range', 'tracking.updated_at');
@@ -106,6 +113,7 @@ class TrackingSearch extends Tracking
             ->andFilterWhere(['like', 'track_number', $this->track_number])
             ->andFilterWhere(['like', 'first_name', $this->first_name])
             ->andFilterWhere(['like', 'last_name', $this->last_name])
+            ->andFilterWhere(['like', 'carrier', $this->carrier])
             ->andFilterWhere(['like', 'upload_operation.filename', $this->filename]);
 
         return $dataProvider;
@@ -129,4 +137,39 @@ class TrackingSearch extends Tracking
             //$this->$fieldName = null;
         }
     }
+
+    public static function getTrackerStatusLabels()
+    {
+        $labels = parent::getTrackerStatusLabels();
+
+        $labels[self::TRACKER_STATUS_NOT_DELIVERED] = 'All not delivered';
+        $labels[self::TRACKER_STATUS_STUCK] = 'All failed';
+
+        return $labels;
+    }
+
+
+    protected function filterTrackerStatus($query)
+    {
+        $codes = self::getTrackerStatusCodes();
+
+        switch ($this->tracker_status)
+        {
+            case self::TRACKER_STATUS_NOT_DELIVERED:
+                $query->andWhere('tracker_status IS NOT NULL')->andFilterWhere(['<>', 'tracker_status', $codes['delivered']]);
+                return;
+            case self::TRACKER_STATUS_STUCK:
+                $query->andFilterWhere([
+                    'tracker_status' => [
+                        $codes['undelivered'],
+                        $codes['exception'],
+                        $codes['expired'],
+                    ]
+                ]);
+                return;
+            default:
+                $query->andFilterWhere(['tracker_status' => $this->tracker_status]);
+        }
+    }
+
 }
