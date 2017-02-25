@@ -42,6 +42,6 @@ $codes = Tracking::getTrackerStatusCodes();
             <?php } ?>
 
         </div>
-        <span class="nav navbar-nav pull-right"><?= Html::a('View', ['api-operation/view', 'id' => $model->id], ['class' => 'btn btn-success'])?></span>
+        <span class="nav navbar-nav pull-right"><?= Html::a('View', ['api-operation/view', 'id' => $model->id], ['class' => 'btn btn-primary'])?></span>
     </div>
 </div>
