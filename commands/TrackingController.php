@@ -162,7 +162,7 @@ class TrackingController extends Controller
         $query = Tracking::find()
             ->andWhere([
                 'tracker_status' => $codes['delivered'],
-                'status' => [self::STATUS_NORMAL, self::STATUS_URGENT],
+                'status' => [Tracking::STATUS_NORMAL, Tracking::STATUS_URGENT],
             ])
             ->orderBy('tracked_at ASC');
 
