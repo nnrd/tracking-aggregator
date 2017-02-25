@@ -110,14 +110,6 @@ if ($model->parseResponse())
             ]) ?>
         </div>
     </div>
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'request:ntext',
-            'response:ntext',
-        ],
-    ]) ?>
-
     <?php if ($originTrackInfo) {
         echo '<h2>Origin tracking information</h2>';
         foreach($originTrackInfo as $info) {?>
@@ -135,5 +127,15 @@ if ($model->parseResponse())
             <span><strong>Description:</strong> <?= $info->StatusDescription ?></span><br>
         </div>
     <?php } } ?>
+
+    <h2>Tech data</h2>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'request:ntext',
+            'response:ntext',
+        ],
+    ]) ?>
 
 </div>
