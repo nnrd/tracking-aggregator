@@ -90,16 +90,19 @@ class Category extends \yii\db\ActiveRecord
      *
      * @return string[]
      */
-    public function getPath($withRoot = false)
+    public function getPath()
     {
-        $path = $this->parents($this->depth - ($withRoot ? 0 : 1))->asArray()->all();
+        static $memoize = [];
 
-        if($this->depth > 0 || $withRoot)
-        {
-            $path[] = $this->toArray();
+        if (array_key_exists($this->id, $memoize)) {
+            return $memoize[$this->id];
         }
 
-        return \yii\helpers\ArrayHelper::map($path, 'id', 'title');
+        $path = $this->parents($this->depth)->asArray()->all();
+        $path[] = $this->toArray();
+
+        $memoize[$this->id] = \yii\helpers\ArrayHelper::map($path, 'id', 'title');
+        return $memoize[$this->id];
     }
 
     /**
@@ -116,7 +119,7 @@ class Category extends \yii\db\ActiveRecord
 
         foreach($roots as $root)
         {
-            $result[$root->id] = implode(' / ', $root->getPath(true));
+            $result[$root->id] = $root->title;
             self::walkNodes($root, $result);
         }
         return $result;
@@ -126,7 +129,7 @@ class Category extends \yii\db\ActiveRecord
     {
         foreach($node->children(1)->all() as $subnode)
         {
-            $result[$subnode->id] = implode(' / ', $subnode->getPath(true));
+            $result[$subnode->id] = implode(' / ', $subnode->getPath());
             self::walkNodes($subnode, $result);
         }
     }
