@@ -7,9 +7,9 @@ use app\models\Tracking;
 /* @var $this yii\web\View */
 /* @var $model app\models\ApiOperation */
 
-$this->title = $model->id;
+$this->title = 'API operation';
 $this->params['breadcrumbs'][] = ['label' => 'Api Operations', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = $model->id;
 
 $statuses = $model->getStatusLabels();
 $statusWarnings = $model->getStatusWarningLevels();
@@ -63,17 +63,6 @@ if ($model->parseResponse())
 <div class="api-operation-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
 
     <div class="row">
         <div class="col-md-6">

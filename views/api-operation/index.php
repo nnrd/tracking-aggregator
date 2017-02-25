@@ -55,7 +55,7 @@ $statusWarnings = $searchModel->getStatusWarningLevels();
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {delete}',
+                'template' => '{view}',
             ],
         ],
     ]); ?>
