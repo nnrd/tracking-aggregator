@@ -28,6 +28,9 @@ class ApiOperation extends \yii\db\ActiveRecord
 
     public $suggestion = 0;
 
+    public $trackStatus;
+    public $trackInfo;
+
     /**
      * @inheritdoc
      */
@@ -69,7 +72,7 @@ class ApiOperation extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'tracking_id' => Yii::t('app', 'Tracking ID'),
-            'status' => Yii::t('app', 'Operation status'),
+            'status' => Yii::t('app', 'Status'),
             'url' => Yii::t('app', 'Request url'),
             'path' => Yii::t('app', 'Request path'),
             'request' => Yii::t('app', 'Request body'),
@@ -84,7 +87,7 @@ class ApiOperation extends \yii\db\ActiveRecord
     public function getTrackings()
     {
         return $this->hasMany(Tracking::className(), ['id' => 'tracking_id'])
-            ->viaTable('api_operation_map', ['api_operation_id', 'id']);
+            ->viaTable('api_operation_map', ['api_operation_id' => 'id']);
     }
 
     public function linkTrackings($trackings)
@@ -97,5 +100,40 @@ class ApiOperation extends \yii\db\ActiveRecord
 
         $command = Yii::$app->db->createCommand('INSERT INTO `api_operation_map` (tracking_id, api_operation_id) VALUES ' . implode(',', $values));
         return $command->execute();
+    }
+
+    public static function getStatusLabels()
+    {
+        return [
+            self::STATUS_REQUESTED => 'Requested',
+            self::STATUS_RESPONDED => 'Responded',
+        ];
+    }
+
+    public static function getStatusWarningLevels()
+    {
+        return [
+            self::STATUS_REQUESTED => 'warning',
+            self::STATUS_RESPONDED => 'success',
+        ];
+    }
+
+    public function parseResponse()
+    {
+        if ($this->code == 200 || $this->code == 201)
+        {
+            $json = json_decode($this->response);
+            if ($json)
+            {
+                if (isset($json->data->status)) {
+                    $this->trackStatus = $json->data->status;
+                }
+                if (isset($json->data->origin_info->trackinfo)) {
+                    $this->trackInfo = $json->data->origin_info->track_info;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }

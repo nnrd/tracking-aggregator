@@ -51,10 +51,12 @@ class Html extends \yii\helpers\BaseHtml
      */
     public static function bsalert($content, $class = 'danger')
     {
-        $options = is_array($class)
-            ? $class
-            : ['class' => "alert alert-{$class}"] ;
+        if ($content)
+        {
+            $options = is_array($class) ? $class : ['class' => "alert alert-{$class} tight"] ;
 
-        return self::tag('div', $content, $options);
+            return self::tag('div', $content, $options);
+        }
+        return '';
     }
 }

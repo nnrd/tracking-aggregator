@@ -1,13 +1,15 @@
 <?php
 
-use yii\helpers\Html;
+use app\components\Html;
 use yii\widgets\DetailView;
 use app\models\Category;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Tracking */
 
-$this->title = $model->id;
+$carriers = $model->getCarrierLabels();
+
+$this->title = $model->track_number ? "{$model->track_number} (id: {$model->id})" : "id: {$model->id}";
 $this->params['breadcrumbs'][] = ['label' => 'Trackings', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -26,39 +28,75 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'order_id',
-            [
-                'attribute' => 'category_id',
-                'value' => isset($model->category_id) ? implode(' / ', Category::find()
-                                                                ->andFilterWhere(['id' =>  $model->category_id])->one()->getPath(true)) : null,
-            ],
-            'track_number',
-            'first_name',
-            'last_name',
-            [
-                'attribute' => 'status',
-                'value' => isset($model->status) ? $model->getStatusLabels()[$model->status] : null,
-            ],
-            [
-                'attribute' => 'tracker_status',
-                'value' => isset($model->status) ? $model->getTrackerStatusLabels()[$model->status] : null,
-            ],
-            [
-                'attribute' => 'upload_id',
-                'label' => Yii::t('app', 'Filename'),
-                'format' => 'html',
-                'value' => ($model->upload_id && $model->uploadOperation)
-                ? Html::a($model->uploadOperation->filename, ['uploads/view', 'id' => $model->uploadOperation->id])
-                : $model->upload_id,
-            ],
-            'created_at:datetime',
-            'updated_at:datetime',
-            'tracked_at:datetime',
-        ],
-    ]) ?>
+    <div class="row">
+        <div class="col-md-4">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'order_id',
+                    [
+                        'attribute' => 'category_id',
+                        'value' => isset($model->category_id) ? implode(' / ', Category::find()->andFilterWhere(['id' =>  $model->category_id])->one()->getPath(true)) : null,
+                    ],
+                    'first_name',
+                    'last_name',
+                ],
+            ]) ?>
+        </div>
+        <div class="col-md-4">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'track_number',
+                    [
+                        'attribute' => 'carrier',
+                        'format' => 'html',
+                        'value' => isset($model->carrier) && array_key_exists($model->carrier, $carriers) ? $model->getCarrierLabels()[$model->carrier] : $model->carrier,
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'format' => 'html',
+                        'value' => isset($model->status) ? Html::bsalert($model->getStatusLabels()[$model->status], $model->getStatusWarningLevels()[$model->status]) : null,
+                    ],
+                    [
+                        'attribute' => 'tracker_status',
+                        'format' => 'html',
+                        'value' => isset($model->status) ? Html::bsalert($model->getTrackerStatusLabels()[$model->status], $model->getTrackerStatusWarningLevels()[$model->status]) : null,
+                    ],
+                ],
+            ]) ?>
+        </div>
+        <div class="col-md-4">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'tracked_at:datetime',
+                    'created_at:datetime',
+                    'updated_at:datetime',
+                    [
+                        'attribute' => 'upload_id',
+                        'label' => Yii::t('app', 'Filename'),
+                        'format' => 'html',
+                        'value' => ($model->upload_id && $model->uploadOperation)
+                               ? Html::a($model->uploadOperation->filename, ['uploads/view', 'id' => $model->uploadOperation->id])
+                               : $model->upload_id,
+                    ],
+                ],
+            ]) ?>
+        </div>
+    </div>
+
+    <?php
+    $apiOps = $model->apiOperations;
+    if ($apiOps) { ?>
+        <h2>Tracker operations</h2>
+        <div class="row">
+        <?php
+        foreach($apiOps as $op) {
+            printf('<div class="col-md-4">%s</div>', $this->render('/api-operation/widget', ['model' => $op]));
+        }
+        ?>
+        </div>
+    <?php } ?>
 
 </div>

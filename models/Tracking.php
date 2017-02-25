@@ -116,7 +116,7 @@ class Tracking extends \yii\db\ActiveRecord
     public function getApiOperations()
     {
         return $this->hasMany(ApiOperation::className(), ['id' => 'api_operation_id'])
-            ->viaTable('api_operation_map', ['tracking_id', 'id']);
+            ->viaTable('api_operation_map', ['tracking_id' => 'id']);
     }
 
     /**
@@ -240,7 +240,7 @@ class Tracking extends \yii\db\ActiveRecord
             'hong-kong-post'              => 'Hong Kong Post',
             'iceland-post'                => 'Iceland post',
             'israel-post'                 => 'Israel post',
-            'israel-post'                 => 'Israel post',
+            'india-post'                  => 'India post',
             'japan-post'                  => 'Japan post',
             'jcex'                        => 'JCEX',
             'kazpost'                     => 'Kazakhstan post',

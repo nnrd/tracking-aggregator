@@ -124,3 +124,9 @@ a.desc:after {
     background-color: #ddd;
     border-color: #999;
 }
+
+.alert.tight {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0 15px;
+}
