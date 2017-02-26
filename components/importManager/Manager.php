@@ -3,6 +3,7 @@ namespace app\components\importManager;
 
 use Yii;
 use yii\helpers\FileHelper;
+use yii\helpers\HtmlPurifier;
 use app\models\UploadOperation;
 use app\models\Category;
 use app\models\Tracking;
@@ -71,8 +72,8 @@ class Manager extends \yii\base\Component
         }
         $transaction = Yii::$app->db->beginTransaction();
 
-        // try
-        // {
+        try
+        {
             if (array_key_exists($mime, $this->handlers))
             {
                 $class = $this->handlers[$mime];
@@ -111,18 +112,18 @@ class Manager extends \yii\base\Component
             $op->addError('format', Yii::t('app', 'Files of {0} are can not be processed', $mime));
             $transaction->rollback();
             return $op;
-        // }
-        // catch(\Exception $e)
-        // {
-        //     $transaction->rollback();
-        //     return $op;
-        // }
+        }
+        catch(\Exception $e)
+        {
+            $transaction->rollback();
+            return $op;
+        }
     }
 
     protected function createOperation($filename, $mime)
     {
         return new UploadOperation([
-            'filename' => $filename,
+            'filename' => HtmlPurifier::process($filename),
             'mime' => $mime,
             'status' => UploadOperation::STATUS_UPLOADED,
             'uploaded_by' => Yii::$app->user->id,
