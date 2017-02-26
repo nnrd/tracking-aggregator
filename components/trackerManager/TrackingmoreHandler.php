@@ -32,7 +32,7 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
                     $tracking->save();
                 }
             }
-            elseif (self::responseFail($response, 4032)) // Bogus carrier, don't mess up anymore
+            elseif (self::responseFail($response, 4032)) // Bogus carrier or deleted - don't mess up anymore
             {
                 $tracking->status = Tracking::STATUS_DISABLED;
                 $tracking->updateTracked();
@@ -129,17 +129,17 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
         {
             $response = $this->req->send([$tracking], 'delete', "/trackings/{$tracking->carrier}/{$tracking->track_number}");
 
-            if (self::responseSuccess($response))
-            {
-                $tracking->updateTracked();
-                $tracking->save();
-            }
-            elseif (self::responseFail($response, 4017)) // Not found
+            if (self::responseSuccess($response) || self::responseFail($response, 4017))
             {
                 $tracking->status = Tracking::STATUS_DISABLED;
                 $tracking->updateTracked();
                 $tracking->save();
             }
+            // elseif (self::responseFail($response, 4017)) // Not found
+            // {
+            //     $tracking->updateTracked();
+            //     $tracking->save();
+            // }
 
             $transaction->commit();
             self::updateSuggestions($response['api_operation']);
@@ -165,9 +165,18 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
         }
     }
 
-    protected static function responseFail($response, $code)
+    protected static function responseFail($response, $codes)
     {
-        return isset($response['json']->meta->code) && ($response['json']->meta->code == $code);
+        if (!is_array($codes))
+        {
+            $codes = [$codes];
+        }
+        foreach($codes as $code)
+        {
+            if (isset($response['json']->meta->code) && ($response['json']->meta->code == $code)) return true;
+
+        }
+        return false;
     }
 
 }

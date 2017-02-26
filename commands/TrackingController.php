@@ -143,11 +143,11 @@ class TrackingController extends Controller
         foreach($query->all() as $tracking)
         {
             $op = $this->api->deleteTracking($tracking);
-            if ($op->code == 200)
+            if ($op->code == 200 || $op->code == 404)
             {
                 $tracking->delete();
-                $requested++;
             }
+            $requested++;
             $this->apiOpSleep($op);
         }
 
@@ -173,11 +173,6 @@ class TrackingController extends Controller
         foreach($query->all() as $tracking)
         {
             $op = $this->api->deleteTracking($tracking);
-            if ($op->code == 200)
-            {
-                $tracking->status = Tracking::STATUS_DISABLED;
-                $tracking->save();
-            }
             $this->apiOpSleep($op);
         }
     }
