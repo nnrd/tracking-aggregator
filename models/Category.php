@@ -17,6 +17,9 @@ use creocoder\nestedsets\NestedSetsBehavior;
  */
 class Category extends \yii\db\ActiveRecord
 {
+
+    private static $memoize = [];
+
     /**
      * @inheritdoc
      */
@@ -92,17 +95,15 @@ class Category extends \yii\db\ActiveRecord
      */
     public function getPath()
     {
-        static $memoize = [];
-
-        if (array_key_exists($this->id, $memoize)) {
-            return $memoize[$this->id];
+        if (array_key_exists($this->id, self::$memoize)) {
+            return self::$memoize[$this->id];
         }
 
         $path = $this->parents($this->depth)->asArray()->all();
         $path[] = $this->toArray();
 
-        $memoize[$this->id] = \yii\helpers\ArrayHelper::map($path, 'id', 'title');
-        return $memoize[$this->id];
+        self::$memoize[$this->id] = \yii\helpers\ArrayHelper::map($path, 'id', 'title');
+        return self::$memoize[$this->id];
     }
 
     /**
