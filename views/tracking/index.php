@@ -77,7 +77,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             ],
             [
                 'attribute' => 'tracker_status',
-                'filter'    => $searchModel->getTrackerStatusLabels(),
+                'filter'    => $trackerStatuses,
                 'format'    => 'raw',
                 'value'     => function(Tracking $model) use ($trackerStatuses, $trackerStatusWarnings)
                 {
@@ -88,7 +88,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             ],
             [
                 'attribute' => 'filename',
-                'format' => 'html',
+                'format' => 'raw',
                 'value'     => function(Tracking $model)
                 {
                     return ($model->upload_id && $model->uploadOperation)
