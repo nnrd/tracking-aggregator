@@ -77,7 +77,7 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
             ],
             [
                 'attribute' => 'tracker_status',
-                'filter'    => $trackerStatuses,
+                'filter'    => $searchModel->getTrackerStatusLabels(),
                 'format'    => 'raw',
                 'value'     => function(Tracking $model) use ($trackerStatuses, $trackerStatusWarnings)
                 {
