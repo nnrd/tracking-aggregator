@@ -39,3 +39,7 @@ tests/_support/_generated
 # Ignore logs
 log/
 logs/
+
+# index
+
+/web/index.php
