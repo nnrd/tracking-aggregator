@@ -309,4 +309,11 @@ class Tracking extends \yii\db\ActiveRecord
     {
         $this->tracked_at = time();
     }
+
+    public function beforeSave($insert)
+    {
+        $res = parent::beforeSave($insert);
+        $this->track_number = strtoupper($this->track_number);
+        return $res;
+    }
 }

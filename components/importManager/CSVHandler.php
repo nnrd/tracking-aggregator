@@ -44,7 +44,8 @@ class CSVHandler extends \yii\base\Component
     {
         if (count($csvLine) >= self::LINE_LENGTH)
         {
-            $tracking = Tracking::find()->andFilterWhere(['track_number' => $csvLine[self::INDEX_TRACKING]])->one();
+            $number = strtoupper($csvLine[self::INDEX_TRACKING]);
+            $tracking = Tracking::find()->andFilterWhere(['track_number' => $number])->one();
             if ($tracking)
             {
                 $tracking->order_id = $csvLine[self::INDEX_ORDER_ID];
@@ -58,7 +59,7 @@ class CSVHandler extends \yii\base\Component
                     'order_id'     => $csvLine[self::INDEX_ORDER_ID],
                     'first_name'   => $csvLine[self::INDEX_FIRST_NAME],
                     'last_name'    => $csvLine[self::INDEX_LAST_NAME],
-                    'track_number' => $csvLine[self::INDEX_TRACKING],
+                    'track_number' => $number,
                     'upload_id'    => $this->operation->id,
                 ]);
             }
