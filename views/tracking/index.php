@@ -43,11 +43,16 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
                 'format' => 'raw',
                 'value' => function(Tracking $model)
                 {
-                    $categories = $model->category->getPath(true);
-                    array_walk($categories, function(&$v, $i) {
-                        $v = Html::bslabel($v);
-                    });
-                    return implode(' / ', $categories);
+                    $category = $model->category;
+                    if ($category)
+                    {
+                        $categories = $model->category->getPath(true);
+                        array_walk($categories, function(&$v, $i) {
+                            $v = Html::bslabel($v);
+                        });
+                        return implode(' / ', $categories);
+                    }
+                    return $category;
                 },
                 'headerOptions' => ['style' => 'width:10%'],
             ],
