@@ -58,8 +58,12 @@ BootstrapTreeviewWidget = (function (_this)
                 initMovable();
             });
 
+            updateControls();
+            initMovable();
+
             // Catch events before treeview to preserve our editing controls
             $widget[0].addEventListener('click', function(event) {
+                return;
                 var $target = $(event.target);
                 if ($target.hasClass('stop-bubble') || stopBubble)
                 {
