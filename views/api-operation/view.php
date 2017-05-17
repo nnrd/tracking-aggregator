@@ -19,6 +19,11 @@ $trackerStatusWarnings = Tracking::getTrackerStatusWarningLevels();
 $codes = Tracking::getTrackerStatusCodes();
 
 
+$status = '';
+$originTrackInfo = false;
+$destinationTrackInfo = false;
+
+
 if ($model->parseResponse())
 {
     if ($model->trackStatus)
@@ -36,27 +41,15 @@ if ($model->parseResponse())
         $warning = $code !== false ? $trackerStatusWarnings[$code] : 'unimportant';
         $status = Html::bslabel($status, $warning);
     }
-    else
-    {
-        $status = '';
-    }
 
     if ($model->originTrackInfo)
     {
         $originTrackInfo = $model->originTrackInfo;
     }
-    else
-    {
-        $originTrackInfo = false;
-    }
 
     if ($model->destinationTrackInfo)
     {
         $destinationTrackInfo = $model->destinationTrackInfo;
-    }
-    else
-    {
-        $destinationTrackInfo = false;
     }
 }
 ?>
