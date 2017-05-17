@@ -98,7 +98,7 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
                     foreach($response['json']->data->errors as $apiTrackingErrors)
                     {
                         if ( isset($apiTrackingErrors->code) && $apiTrackingErrors->code == 4016 &&
-                             array_key_exists($apiTracking->tracking_number, $trackingMap) )
+                             array_key_exists($apiTrackingErrors->tracking_number, $trackingMap) )
                         {
                             $tracking = $trackingMap[$apiTrackingErrors->tracking_number];
                             $tracking->updateTrackerStatus('pending'); // Treat it as pending
