@@ -66,22 +66,45 @@ class TrackingmoreHandler extends \yii\base\Component implements Tracker
 
             $response = $this->req->send($trackings, 'post', '/trackings/batch', $data);
 
-            if (self::responseSuccess($response) && isset($response['json']->data->trackings))
+            if (self::responseSuccess($response))
             {
-                $trackingMap = [];
-                foreach($trackings as $tracking)
+                if (isset($response['json']->data->trackings))
                 {
-                    $trackingMap[$tracking->track_number] = $tracking;
-                }
-
-                foreach($response['json']->data->trackings as $apiTracking)
-                {
-                    if (array_key_exists($apiTracking->tracking_number, $trackingMap))
+                    $trackingMap = [];
+                    foreach($trackings as $tracking)
                     {
-                        $tracking = $trackingMap[$apiTracking->tracking_number];
-                        $tracking->updateTrackerStatus($apiTracking->status);
-                        $tracking->updateTracked();
-                        $tracking->save();
+                        $trackingMap[$tracking->track_number] = $tracking;
+                    }
+
+                    foreach($response['json']->data->trackings as $apiTracking)
+                    {
+                        if (array_key_exists($apiTracking->tracking_number, $trackingMap))
+                        {
+                            $tracking = $trackingMap[$apiTracking->tracking_number];
+                            $tracking->updateTrackerStatus($apiTracking->status);
+                            $tracking->updateTracked();
+                            $tracking->save();
+                        }
+                    }
+                }
+                if (isset($response['json']->data->errors))
+                {
+                    $trackingMap = [];
+                    foreach($trackings as $tracking)
+                    {
+                        $trackingMap[$tracking->track_number] = $tracking;
+                    }
+
+                    foreach($response['json']->data->errors as $apiTrackingErrors)
+                    {
+                        if ( isset($apiTrackingErrors->code) && $apiTrackingErrors->code == 4016 &&
+                             array_key_exists($apiTracking->tracking_number, $trackingMap) )
+                        {
+                            $tracking = $trackingMap[$apiTrackingErrors->tracking_number];
+                            $tracking->updateTrackerStatus('pending'); // Treat it as pending
+                            $tracking->updateTracked();
+                            $tracking->save();
+                        }
                     }
                 }
             }
