@@ -24,7 +24,6 @@ class Manager extends \yii\base\Component
     {
         $ops = [];
         $category = false;
-
         if (isset($form->category_id))
         {
             $category = Category::findOne($form->category_id);
@@ -86,7 +85,6 @@ class Manager extends \yii\base\Component
                 $op->handler = $class;
 
                 $imported = $handler->process($file);
-
                 if ($imported == 0)
                 {
                     $transaction->rollback();
